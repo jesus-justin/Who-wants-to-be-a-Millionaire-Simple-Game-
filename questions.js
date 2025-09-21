@@ -180,6 +180,9 @@ function loadSettings() {
     elements.soundToggle.checked = gameState.settings.sound;
     elements.musicToggle.checked = gameState.settings.music;
     elements.themeSelect.value = gameState.settings.theme;
+    
+    // Apply theme on load
+    applyTheme(gameState.settings.theme);
 }
 
 // Save Settings to Local Storage
@@ -196,6 +199,9 @@ function saveSettings() {
     gameState.settings = { ...gameState.settings, ...settings };
     gameState.difficulty = settings.difficulty;
     gameState.playerName = settings.playerName;
+    
+    // Apply theme immediately
+    applyTheme(settings.theme);
     
     updatePlayerInfo();
     closeModal('settingsModal');
@@ -432,7 +438,7 @@ function useAudiencePoll(question, optionButtons) {
     const percentages = [0, 0, 0, 0];
     percentages[correctIndex] = Math.floor(Math.random() * 30) + 50; // 50-80%
     
-    const remaining = 100 - percentages[correctIndex];
+    let remaining = 100 - percentages[correctIndex];
     const otherOptions = [0, 1, 2, 3].filter(i => i !== correctIndex);
     
     otherOptions.forEach((index, i) => {
@@ -445,10 +451,11 @@ function useAudiencePoll(question, optionButtons) {
         }
     });
     
-    // Show audience poll results
-    let pollResults = "Audience Poll Results:\n";
+    // Show audience poll results with visual bars
+    let pollResults = "🎯 Audience Poll Results:\n\n";
     question.options.forEach((option, index) => {
-        pollResults += `${option}: ${percentages[index]}%\n`;
+        const bar = "█".repeat(Math.floor(percentages[index] / 5));
+        pollResults += `${option}: ${percentages[index]}% ${bar}\n`;
     });
     
     showNotification(pollResults, 'info');
@@ -540,6 +547,48 @@ function resetSettings() {
     elements.musicToggle.checked = true;
     elements.themeSelect.value = 'classic';
     saveSettings();
+}
+
+// Apply Theme
+function applyTheme(theme) {
+    const body = document.body;
+    
+    // Remove existing theme classes
+    body.classList.remove('theme-classic', 'theme-dark', 'theme-neon');
+    
+    // Add new theme class
+    body.classList.add(`theme-${theme}`);
+    
+    // Update CSS custom properties for dynamic theming
+    const root = document.documentElement;
+    
+    switch(theme) {
+        case 'dark':
+            root.style.setProperty('--primary-bg', 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)');
+            root.style.setProperty('--secondary-bg', 'rgba(0, 0, 0, 0.9)');
+            root.style.setProperty('--accent-color', '#00d4ff');
+            root.style.setProperty('--text-color', '#ffffff');
+            root.style.setProperty('--button-bg', 'linear-gradient(45deg, #00d4ff, #0099cc)');
+            root.style.setProperty('--gold-color', '#00d4ff');
+            break;
+        case 'neon':
+            root.style.setProperty('--primary-bg', 'linear-gradient(135deg, #0f0f23 0%, #1a0a2e 100%)');
+            root.style.setProperty('--secondary-bg', 'rgba(0, 0, 0, 0.95)');
+            root.style.setProperty('--accent-color', '#ff00ff');
+            root.style.setProperty('--text-color', '#ffffff');
+            root.style.setProperty('--button-bg', 'linear-gradient(45deg, #ff00ff, #00ffff)');
+            root.style.setProperty('--gold-color', '#00ffff');
+            break;
+        case 'classic':
+        default:
+            root.style.setProperty('--primary-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+            root.style.setProperty('--secondary-bg', 'rgba(0, 0, 0, 0.8)');
+            root.style.setProperty('--accent-color', '#ffd700');
+            root.style.setProperty('--text-color', '#ffffff');
+            root.style.setProperty('--button-bg', 'linear-gradient(45deg, #667eea, #764ba2)');
+            root.style.setProperty('--gold-color', '#ffd700');
+            break;
+    }
 }
 
 // Notification System

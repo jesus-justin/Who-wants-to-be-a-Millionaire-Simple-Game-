@@ -5,12 +5,23 @@
     box-sizing: border-box;
 }
 
+/* CSS Custom Properties for Theming */
+:root {
+    --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-bg: rgba(0, 0, 0, 0.8);
+    --accent-color: #ffd700;
+    --text-color: #ffffff;
+    --button-bg: linear-gradient(45deg, #667eea, #764ba2);
+    --gold-color: #ffd700;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--primary-bg);
+    color: var(--text-color);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: all 0.3s ease;
 }
 
 /* Header Styles */
@@ -40,14 +51,14 @@ body {
 
 .logo i {
     font-size: 2rem;
-    color: #ffd700;
+    color: var(--gold-color);
     animation: pulse 2s infinite;
 }
 
 .logo h1 {
     font-size: 1.8rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    background: linear-gradient(45deg, var(--gold-color), #ffed4e);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -59,7 +70,7 @@ body {
 }
 
 .settings-btn, .leaderboard-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: var(--button-bg);
     border: none;
     color: white;
     padding: 0.8rem 1.5rem;
@@ -91,7 +102,7 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 300px;
-    background: rgba(0, 0, 0, 0.8);
+    background: var(--secondary-bg);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2rem;
@@ -109,7 +120,7 @@ body {
 .player-avatar {
     width: 80px;
     height: 80px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    background: linear-gradient(45deg, var(--gold-color), #ffed4e);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -139,13 +150,13 @@ body {
 .score-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #ffd700;
+    color: var(--gold-color);
 }
 
 /* Lifelines */
 .lifelines h4 {
     margin-bottom: 1rem;
-    color: #ffd700;
+    color: var(--gold-color);
     font-size: 1.1rem;
 }
 
@@ -156,7 +167,7 @@ body {
 }
 
 .lifeline-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: var(--button-bg);
     border: none;
     color: white;
     padding: 1rem;
@@ -184,7 +195,7 @@ body {
 /* Prize Ladder */
 .prize-ladder h4 {
     margin: 2rem 0 1rem;
-    color: #ffd700;
+    color: var(--gold-color);
     font-size: 1.1rem;
 }
 
@@ -206,7 +217,7 @@ body {
 }
 
 .ladder-item.current {
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    background: linear-gradient(45deg, var(--gold-color), #ffed4e);
     color: #000;
     border-left-color: #ff6b6b;
     transform: scale(1.05);
@@ -226,7 +237,7 @@ body {
 }
 
 .game-container {
-    background: rgba(0, 0, 0, 0.8);
+    background: var(--secondary-bg);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 3rem;
@@ -257,7 +268,7 @@ body {
 }
 
 .question-number {
-    color: #ffd700;
+    color: var(--gold-color);
 }
 
 .question-prize {
@@ -280,7 +291,7 @@ body {
 }
 
 .option-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: var(--button-bg);
     border: none;
     color: white;
     padding: 1.5rem;
@@ -864,4 +875,99 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* Theme-Specific Styles */
+.theme-dark {
+    --primary-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --secondary-bg: rgba(0, 0, 0, 0.9);
+    --accent-color: #00d4ff;
+    --text-color: #ffffff;
+    --button-bg: linear-gradient(45deg, #00d4ff, #0099cc);
+    --gold-color: #00d4ff;
+}
+
+.theme-dark .header {
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 2px solid #00d4ff;
+}
+
+.theme-dark .ladder-item.current {
+    background: linear-gradient(45deg, #00d4ff, #0099cc);
+    color: #000;
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+}
+
+.theme-dark .option-btn.correct {
+    background: linear-gradient(45deg, #00ff88, #00cc66);
+}
+
+.theme-dark .modal-header h2 {
+    color: #00d4ff;
+}
+
+.theme-dark .setting-group label {
+    color: #00d4ff;
+}
+
+.theme-neon {
+    --primary-bg: linear-gradient(135deg, #0f0f23 0%, #1a0a2e 100%);
+    --secondary-bg: rgba(0, 0, 0, 0.95);
+    --accent-color: #ff00ff;
+    --text-color: #ffffff;
+    --button-bg: linear-gradient(45deg, #ff00ff, #00ffff);
+    --gold-color: #00ffff;
+}
+
+.theme-neon .header {
+    background: rgba(0, 0, 0, 0.98);
+    border-bottom: 2px solid #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.theme-neon .sidebar,
+.theme-neon .game-container {
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+}
+
+.theme-neon .ladder-item.current {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    animation: neonGlow 2s infinite alternate;
+}
+
+.theme-neon .option-btn {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 0, 255, 0.1);
+}
+
+.theme-neon .option-btn:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.theme-neon .option-btn.correct {
+    background: linear-gradient(45deg, #00ff88, #00cc66);
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+}
+
+.theme-neon .modal-header h2 {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.theme-neon .setting-group label {
+    color: #00ffff;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.theme-neon .lifeline-btn:hover,
+.theme-neon .settings-btn:hover,
+.theme-neon .leaderboard-btn:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+@keyframes neonGlow {
+    0% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.5); }
+    100% { box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.3); }
 }
