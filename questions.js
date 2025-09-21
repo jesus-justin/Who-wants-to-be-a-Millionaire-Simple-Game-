@@ -4,33 +4,93 @@ const questions = {
     {
         q: "🇵🇭 What is the national hero of the Philippines?",
         options: ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo", "Lapu-Lapu"],
-            answer: "Jose Rizal",
-            category: "History"
+        answer: "Jose Rizal",
+        category: "Philippines History"
     },
     {
         q: "🦁 Which animal is called the King of the Jungle?",
         options: ["Tiger", "Lion", "Elephant", "Bear"],
-            answer: "Lion",
-            category: "Nature"
+        answer: "Lion",
+        category: "Nature"
     },
     {
         q: "🌊 What is the largest ocean on Earth?",
         options: ["Indian Ocean", "Atlantic Ocean", "Pacific Ocean", "Arctic Ocean"],
-            answer: "Pacific Ocean",
-            category: "Geography"
+        answer: "Pacific Ocean",
+        category: "Geography"
     },
     {
         q: "🚀 Who was the first man to step on the moon?",
         options: ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "Michael Collins"],
-            answer: "Neil Armstrong",
-            category: "Science"
-        },
-        {
-            q: "🎵 What is the capital of Japan?",
-            options: ["Osaka", "Kyoto", "Tokyo", "Hiroshima"],
-            answer: "Tokyo",
-            category: "Geography"
-        }
+        answer: "Neil Armstrong",
+        category: "Science"
+    },
+    {
+        q: "🎵 What is the capital of Japan?",
+        options: ["Osaka", "Kyoto", "Tokyo", "Hiroshima"],
+        answer: "Tokyo",
+        category: "Geography"
+    },
+    {
+        q: "🇵🇭 What is the capital of the Philippines?",
+        options: ["Cebu", "Davao", "Manila", "Quezon City"],
+        answer: "Manila",
+        category: "Philippines Geography"
+    },
+    {
+        q: "🍎 What color do you get when you mix red and blue?",
+        options: ["Green", "Purple", "Orange", "Yellow"],
+        answer: "Purple",
+        category: "General Knowledge"
+    },
+    {
+        q: "🐧 Which continent is home to penguins?",
+        options: ["North America", "Africa", "Antarctica", "Asia"],
+        answer: "Antarctica",
+        category: "Nature"
+    },
+    {
+        q: "🇵🇭 How many main islands make up the Philippines?",
+        options: ["5,000+", "7,000+", "3,000+", "9,000+"],
+        answer: "7,000+",
+        category: "Philippines Geography"
+    },
+    {
+        q: "☀️ What is the closest star to Earth?",
+        options: ["Alpha Centauri", "The Sun", "Sirius", "Proxima Centauri"],
+        answer: "The Sun",
+        category: "Science"
+    },
+    {
+        q: "🇵🇭 What is the national flower of the Philippines?",
+        options: ["Sampaguita", "Gumamela", "Rosal", "Waling-waling"],
+        answer: "Sampaguita",
+        category: "Philippines Culture"
+    },
+    {
+        q: "🎬 Which company created the movie 'Frozen'?",
+        options: ["Pixar", "DreamWorks", "Disney", "Warner Bros"],
+        answer: "Disney",
+        category: "Entertainment"
+    },
+    {
+        q: "🇵🇭 What is the official language of the Philippines?",
+        options: ["English", "Filipino", "Tagalog", "Cebuano"],
+        answer: "Filipino",
+        category: "Philippines Culture"
+    },
+    {
+        q: "🌍 How many continents are there?",
+        options: ["5", "6", "7", "8"],
+        answer: "7",
+        category: "Geography"
+    },
+    {
+        q: "🇵🇭 Which Philippine president served from 2016-2022?",
+        options: ["Gloria Macapagal-Arroyo", "Rodrigo Duterte", "Benigno Aquino III", "Joseph Estrada"],
+        answer: "Rodrigo Duterte",
+        category: "Philippines Current Events"
+    }
     ],
     medium: [
         {
@@ -62,6 +122,84 @@ const questions = {
             options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"],
             answer: "Leonardo da Vinci",
             category: "Art"
+        },
+        {
+            q: "🇵🇭 What is the largest island in the Philippines?",
+            options: ["Mindanao", "Luzon", "Visayas", "Palawan"],
+            answer: "Luzon",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🌋 What type of volcano is Mount Mayon?",
+            options: ["Shield", "Cinder Cone", "Stratovolcano", "Caldera"],
+            answer: "Stratovolcano",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🇵🇭 Which Philippine province is known as the 'Rice Granary of the Philippines'?",
+            options: ["Nueva Ecija", "Isabela", "Cagayan", "Pangasinan"],
+            answer: "Nueva Ecija",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🎵 What is the national anthem of the Philippines?",
+            options: ["Bayan Ko", "Lupang Hinirang", "Pilipinas Kong Mahal", "Ako ay Pilipino"],
+            answer: "Lupang Hinirang",
+            category: "Philippines Culture"
+        },
+        {
+            q: "🇵🇭 Who is the current President of the Philippines (as of 2024)?",
+            options: ["Rodrigo Duterte", "Bongbong Marcos", "Leni Robredo", "Manny Pacquiao"],
+            answer: "Bongbong Marcos",
+            category: "Philippines Current Events"
+        },
+        {
+            q: "🏛️ What is the oldest university in the Philippines?",
+            options: ["University of the Philippines", "Ateneo de Manila", "University of Santo Tomas", "De La Salle University"],
+            answer: "University of Santo Tomas",
+            category: "Philippines History"
+        },
+        {
+            q: "🌊 Which sea separates the Philippines from Taiwan?",
+            options: ["South China Sea", "Philippine Sea", "Luzon Strait", "Sulu Sea"],
+            answer: "Luzon Strait",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🇵🇭 What is the currency of the Philippines?",
+            options: ["Peso", "Dollar", "Euro", "Yen"],
+            answer: "Peso",
+            category: "Philippines General"
+        },
+        {
+            q: "🎬 Which Filipino movie won the Palme d'Or at Cannes Film Festival?",
+            options: ["Heneral Luna", "On the Job", "Kinatay", "The Woman Who Left"],
+            answer: "The Woman Who Left",
+            category: "Philippines Entertainment"
+        },
+        {
+            q: "🏆 Which Filipino boxer is known as 'Pacman'?",
+            options: ["Nonito Donaire", "Manny Pacquiao", "Gerry Peñalosa", "Flash Elorde"],
+            answer: "Manny Pacquiao",
+            category: "Philippines Sports"
+        },
+        {
+            q: "🌍 What is the smallest country in the world?",
+            options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+            answer: "Vatican City",
+            category: "Geography"
+        },
+        {
+            q: "🔬 What is the speed of sound in air at room temperature?",
+            options: ["300 m/s", "330 m/s", "343 m/s", "350 m/s"],
+            answer: "343 m/s",
+            category: "Science"
+        },
+        {
+            q: "🇵🇭 Which Philippine city is known as the 'Summer Capital'?",
+            options: ["Baguio", "Tagaytay", "Banaue", "Sagada"],
+            answer: "Baguio",
+            category: "Philippines Geography"
         }
     ],
     hard: [
@@ -94,6 +232,96 @@ const questions = {
             options: ["6", "12", "14", "16"],
             answer: "6",
             category: "Chemistry"
+        },
+        {
+            q: "🇵🇭 What is the official name of the Philippines?",
+            options: ["Republic of the Philippines", "Philippine Republic", "United States of the Philippines", "Commonwealth of the Philippines"],
+            answer: "Republic of the Philippines",
+            category: "Philippines Government"
+        },
+        {
+            q: "🏛️ When did the Philippines gain independence from Spain?",
+            options: ["June 12, 1898", "July 4, 1946", "December 10, 1898", "January 1, 1899"],
+            answer: "June 12, 1898",
+            category: "Philippines History"
+        },
+        {
+            q: "🇵🇭 Which Philippine president was known as the 'Iron Lady of Asia'?",
+            options: ["Gloria Macapagal-Arroyo", "Corazon Aquino", "Imelda Marcos", "Leni Robredo"],
+            answer: "Corazon Aquino",
+            category: "Philippines History"
+        },
+        {
+            q: "🌋 What is the highest peak in the Philippines?",
+            options: ["Mount Apo", "Mount Pulag", "Mount Mayon", "Mount Pinatubo"],
+            answer: "Mount Apo",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🇵🇭 Which Philippine province has the most number of islands?",
+            options: ["Palawan", "Cebu", "Bohol", "Mindoro"],
+            answer: "Palawan",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🎭 Who wrote the novel 'Noli Me Tangere'?",
+            options: ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo", "Marcelo del Pilar"],
+            answer: "Jose Rizal",
+            category: "Philippines Literature"
+        },
+        {
+            q: "🇵🇭 What is the oldest city in the Philippines?",
+            options: ["Manila", "Cebu", "Vigan", "Iloilo"],
+            answer: "Cebu",
+            category: "Philippines History"
+        },
+        {
+            q: "🌊 Which Philippine sea is known for its rich marine biodiversity?",
+            options: ["Sulu Sea", "Coral Triangle", "Philippine Sea", "South China Sea"],
+            answer: "Coral Triangle",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🇵🇭 What is the name of the Philippine flag's sun?",
+            options: ["Sun of Liberty", "Sun of Freedom", "Sun of Independence", "Sun of the Revolution"],
+            answer: "Sun of Liberty",
+            category: "Philippines Culture"
+        },
+        {
+            q: "🏆 Which Filipino athlete won the first Olympic gold medal for the Philippines?",
+            options: ["Hidilyn Diaz", "Manny Pacquiao", "Efren Reyes", "Paeng Nepomuceno"],
+            answer: "Hidilyn Diaz",
+            category: "Philippines Sports"
+        },
+        {
+            q: "🇵🇭 Which Philippine region is known as the 'Land of Promise'?",
+            options: ["Mindanao", "Visayas", "Luzon", "Palawan"],
+            answer: "Mindanao",
+            category: "Philippines Geography"
+        },
+        {
+            q: "🎨 Who is known as the 'Father of Philippine Art'?",
+            options: ["Fernando Amorsolo", "Juan Luna", "Carlos Francisco", "Vicente Manansala"],
+            answer: "Fernando Amorsolo",
+            category: "Philippines Art"
+        },
+        {
+            q: "🇵🇭 What is the official name of the Philippine Congress?",
+            options: ["Congress of the Philippines", "National Assembly", "Parliament of the Philippines", "Legislative Assembly"],
+            answer: "Congress of the Philippines",
+            category: "Philippines Government"
+        },
+        {
+            q: "🌍 What is the approximate population of the Philippines?",
+            options: ["100 million", "110 million", "120 million", "130 million"],
+            answer: "110 million",
+            category: "Philippines Demographics"
+        },
+        {
+            q: "🇵🇭 Which Philippine festival is known as the 'Mother of All Festivals'?",
+            options: ["Sinulog", "Ati-Atihan", "Dinagyang", "MassKara"],
+            answer: "Ati-Atihan",
+            category: "Philippines Culture"
         }
     ]
 };
