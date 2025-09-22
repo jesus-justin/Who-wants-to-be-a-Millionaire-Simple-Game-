@@ -337,10 +337,13 @@ let gameState = {
     playerName: 'Player',
     totalQuestions: 0,
     currentQuestions: [],
+    timerId: null,
+    timerSeconds: 30,
     lifelines: {
         '50-50': true,
         'phone': true,
-        'audience': true
+        'audience': true,
+        'swap': true
     },
     gameActive: false,
     settings: {
@@ -355,6 +358,7 @@ const elements = {
     questionText: document.getElementById('questionText'),
     questionNumber: document.getElementById('questionNumber'),
     questionPrize: document.getElementById('questionPrize'),
+    questionTimer: document.getElementById('questionTimer'),
     optionsContainer: document.getElementById('optionsContainer'),
     feedbackText: document.getElementById('feedbackText'),
     currentScore: document.getElementById('currentScore'),
@@ -382,7 +386,8 @@ const elements = {
     // Lifelines
     fiftyFifty: document.getElementById('fiftyFifty'),
     phoneFriend: document.getElementById('phoneFriend'),
-    audiencePoll: document.getElementById('audiencePoll')
+    audiencePoll: document.getElementById('audiencePoll'),
+    swapQuestion: document.getElementById('swapQuestion')
 };
 
 // Initialize Game
@@ -459,6 +464,28 @@ function setupEventListeners() {
     elements.fiftyFifty.addEventListener('click', () => useLifeline('50-50'));
     elements.phoneFriend.addEventListener('click', () => useLifeline('phone'));
     elements.audiencePoll.addEventListener('click', () => useLifeline('audience'));
+    if (elements.swapQuestion) {
+        elements.swapQuestion.addEventListener('click', () => useLifeline('swap'));
+    }
+
+    // Keyboard shortcuts: 1-4 for options, F=50-50, P=phone, A=audience, S=swap
+    document.addEventListener('keydown', (e) => {
+        if (!gameState.gameActive) return;
+        const key = e.key.toLowerCase();
+        if (['1','2','3','4'].includes(key)) {
+            const idx = parseInt(key, 10) - 1;
+            const btn = elements.optionsContainer.querySelectorAll('.option-btn')[idx];
+            if (btn && !btn.disabled) btn.click();
+        } else if (key === 'f') {
+            elements.fiftyFifty?.click();
+        } else if (key === 'p') {
+            elements.phoneFriend?.click();
+        } else if (key === 'a') {
+            elements.audiencePoll?.click();
+        } else if (key === 's') {
+            elements.swapQuestion?.click();
+        }
+    });
     
     // Close modals when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
@@ -517,7 +544,8 @@ function startNewGame() {
     gameState.lifelines = {
         '50-50': true,
         'phone': true,
-        'audience': true
+        'audience': true,
+        'swap': true
     };
     
     buildPrizeLadder();
@@ -567,11 +595,15 @@ function loadQuestion() {
     });
     
     updatePrizeLadder();
+
+    // Start or reset timer
+    startTimer();
 }
 
 // Select Answer
 function selectAnswer(selected) {
     if (!gameState.gameActive) return;
+    stopTimer();
     
     const question = gameState.currentQuestions[gameState.current];
     const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
@@ -634,6 +666,9 @@ function useLifeline(lifeline) {
             break;
         case 'audience':
             useAudiencePoll(question, optionButtons);
+            break;
+        case 'swap':
+            useSwapQuestion();
             break;
     }
     
@@ -708,6 +743,65 @@ function useAudiencePoll(question, optionButtons) {
     showNotification(pollResults, 'info');
 }
 
+// Swap Question Lifeline
+function useSwapQuestion() {
+    // Move current question to the end of the remaining pool and load next
+    if (gameState.current >= gameState.totalQuestions) return;
+    const currentIdx = gameState.current;
+    const swapped = gameState.currentQuestions.splice(currentIdx, 1)[0];
+    gameState.currentQuestions.push(swapped);
+    showNotification('🔁 Question swapped! New question loaded.', 'info');
+    loadQuestion();
+}
+
+// Timer Controls
+function startTimer() {
+    stopTimer();
+    gameState.timerSeconds = 30;
+    updateTimerUI();
+    gameState.timerId = setInterval(() => {
+        if (!gameState.gameActive) { stopTimer(); return; }
+        gameState.timerSeconds -= 1;
+        updateTimerUI();
+        if (gameState.timerSeconds <= 0) {
+            stopTimer();
+            handleTimeout();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    if (gameState.timerId) {
+        clearInterval(gameState.timerId);
+        gameState.timerId = null;
+    }
+}
+
+function updateTimerUI() {
+    if (elements.questionTimer) {
+        elements.questionTimer.textContent = `⏱️ ${gameState.timerSeconds}`;
+        if (gameState.timerSeconds <= 5) {
+            elements.questionTimer.style.color = '#ff6b6b';
+        } else {
+            elements.questionTimer.style.color = '';
+        }
+    }
+}
+
+function handleTimeout() {
+    if (!gameState.gameActive) return;
+    const question = gameState.currentQuestions[gameState.current];
+    const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.option === question.answer) btn.classList.add('correct');
+    });
+    elements.feedbackText.textContent = '⏰ Time is up!';
+    elements.feedbackText.style.color = '#ff0000';
+    if (gameState.settings.sound) playSound('incorrect');
+    setTimeout(() => endGame(false), 1500);
+}
+
 // Update Lifelines Display
 function updateLifelines() {
     Object.keys(gameState.lifelines).forEach(lifeline => {
@@ -739,6 +833,7 @@ function updatePrizeLadder() {
 // End Game
 function endGame(won) {
     gameState.gameActive = false;
+    stopTimer();
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';
     
@@ -770,6 +865,7 @@ function pauseGame() {
     gameState.gameActive = false;
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';
+    stopTimer();
     showNotification('Game paused. Click "Start New Game" to continue.', 'info');
 }
 
