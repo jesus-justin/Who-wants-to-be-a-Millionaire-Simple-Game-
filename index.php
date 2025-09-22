@@ -66,6 +66,10 @@ if (file_exists("scores.json")) {
                         <i class="fas fa-users"></i>
                         <span>Audience</span>
                     </button>
+                    <button class="lifeline-btn" id="swapQuestion" data-lifeline="swap">
+                        <i class="fas fa-random"></i>
+                        <span>Swap</span>
+                    </button>
                 </div>
             </div>
 
@@ -84,6 +88,7 @@ if (file_exists("scores.json")) {
                     <div class="question-header">
                         <span class="question-number" id="questionNumber">Question 1</span>
                         <span class="question-prize" id="questionPrize">₱1,000</span>
+                    <span class="question-timer" id="questionTimer">⏱️ 30</span>
                     </div>
                     <div class="question-text" id="questionText">Loading question...</div>
                 </div>
