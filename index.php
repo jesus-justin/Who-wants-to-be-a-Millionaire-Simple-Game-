@@ -204,7 +204,7 @@ if (file_exists("scores.json")) {
                     <form id="saveScoreForm" method="POST" action="save_score.php">
                         <input type="hidden" name="score" id="finalScore">
                         <div class="input-group">
-                            <input type="text" name="player" id="playerNameInput" placeholder="Enter your name" required>
+                            <input type="text" name="player" id="playerNameSave" placeholder="Enter your name" required>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i>
                                 Save Score
