@@ -335,6 +335,8 @@ let gameState = {
     prize: 0,
     difficulty: 'medium',
     playerName: 'Player',
+    totalQuestions: 0,
+    currentQuestions: [],
     lifelines: {
         '50-50': true,
         'phone': true,
@@ -471,7 +473,9 @@ function setupEventListeners() {
 // Build Prize Ladder
 function buildPrizeLadder() {
     elements.prizeLadder.innerHTML = '';
-    prizes.forEach((prize, index) => {
+    const count = gameState.totalQuestions || Math.min(prizes.length, questions[gameState.difficulty].length);
+    for (let index = 0; index < count; index++) {
+        const prize = prizes[index];
         const ladderItem = document.createElement('div');
         ladderItem.className = 'ladder-item';
         ladderItem.innerHTML = `
@@ -479,7 +483,7 @@ function buildPrizeLadder() {
             <span>₱${prize.toLocaleString()}</span>
         `;
         elements.prizeLadder.appendChild(ladderItem);
-    });
+    }
 }
 
 // Update Player Info
@@ -504,12 +508,19 @@ function startNewGame() {
     gameState.current = 0;
     gameState.prize = 0;
     gameState.gameActive = true;
+    
+    // Build randomized per-game question set
+    const bank = [...questions[gameState.difficulty]];
+    shuffleArray(bank);
+    gameState.totalQuestions = Math.min(prizes.length, bank.length);
+    gameState.currentQuestions = bank.slice(0, gameState.totalQuestions);
     gameState.lifelines = {
         '50-50': true,
         'phone': true,
         'audience': true
     };
     
+    buildPrizeLadder();
     updateLifelines();
     updatePrizeLadder();
     updatePlayerInfo();
@@ -524,12 +535,12 @@ function startNewGame() {
 
 // Load Question
 function loadQuestion() {
-    if (gameState.current >= questions[gameState.difficulty].length) {
+    if (gameState.current >= gameState.totalQuestions) {
         endGame(true);
         return;
     }
 
-    const question = questions[gameState.difficulty][gameState.current];
+    const question = gameState.currentQuestions[gameState.current];
     
     elements.questionNumber.textContent = `Question ${gameState.current + 1}`;
     elements.questionPrize.textContent = `₱${prizes[gameState.current].toLocaleString()}`;
@@ -538,7 +549,9 @@ function loadQuestion() {
     
     // Create options
     elements.optionsContainer.innerHTML = '';
-    question.options.forEach((option, index) => {
+    const shuffledOptions = [...question.options];
+    shuffleArray(shuffledOptions);
+    shuffledOptions.forEach((option) => {
         const optionBtn = document.createElement('button');
         optionBtn.className = 'option-btn';
         optionBtn.textContent = option;
@@ -554,7 +567,7 @@ function loadQuestion() {
 function selectAnswer(selected) {
     if (!gameState.gameActive) return;
     
-    const question = questions[gameState.difficulty][gameState.current];
+    const question = gameState.currentQuestions[gameState.current];
     const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
     
     // Disable all buttons
@@ -603,7 +616,7 @@ function selectAnswer(selected) {
 function useLifeline(lifeline) {
     if (!gameState.gameActive || !gameState.lifelines[lifeline]) return;
     
-    const question = questions[gameState.difficulty][gameState.current];
+    const question = gameState.currentQuestions[gameState.current];
     const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
     
     switch (lifeline) {
@@ -878,6 +891,15 @@ function playSound(soundType) {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + sound.duration);
     }
+}
+
+// Utils
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 // Initialize the game when DOM is loaded
