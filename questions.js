@@ -540,6 +540,12 @@ function loadQuestion() {
         return;
     }
 
+    // Pick a random question from the remaining pool for this turn
+    const randomIndex = gameState.current + Math.floor(Math.random() * (gameState.totalQuestions - gameState.current));
+    const temp = gameState.currentQuestions[gameState.current];
+    gameState.currentQuestions[gameState.current] = gameState.currentQuestions[randomIndex];
+    gameState.currentQuestions[randomIndex] = temp;
+
     const question = gameState.currentQuestions[gameState.current];
     
     elements.questionNumber.textContent = `Question ${gameState.current + 1}`;
