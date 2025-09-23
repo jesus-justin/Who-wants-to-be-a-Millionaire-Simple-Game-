@@ -17,6 +17,7 @@
 3. **Modify questions.js**
    - Pass current difficulty when submitting score to save_score.php
    - Update form submission logic
+   - Add JavaScript for leaderboard tab switching
 
 4. **Test and Verify**
    - Test score saving with different difficulties
@@ -26,5 +27,5 @@
 ### Current Status:
 - [x] Step 1: Modify save_score.php
 - [x] Step 2: Update index.php
-- [ ] Step 3: Modify questions.js
+- [x] Step 3: Modify questions.js
 - [ ] Step 4: Test and verify
