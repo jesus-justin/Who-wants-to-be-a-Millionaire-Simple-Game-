@@ -171,22 +171,83 @@ if (file_exists("scores.json")) {
                 </button>
             </div>
             <div class="modal-body">
-                <div class="leaderboard-list">
-                    <?php if (!empty($scores)) {
-                        arsort($scores);
-                        $rank = 1;
-                        foreach ($scores as $player => $score) {
-                            $medal = $rank <= 3 ? ['🥇', '🥈', '🥉'][$rank-1] : $rank;
-                            echo "<div class='leaderboard-item rank-$rank'>";
-                            echo "<span class='rank'>$medal</span>";
-                            echo "<span class='player'>$player</span>";
-                            echo "<span class='score'>₱" . number_format($score) . "</span>";
-                            echo "</div>";
-                            $rank++;
+                <!-- Difficulty Tabs -->
+                <div class="difficulty-tabs">
+                    <button class="tab-btn active" data-difficulty="easy">Easy</button>
+                    <button class="tab-btn" data-difficulty="medium">Medium</button>
+                    <button class="tab-btn" data-difficulty="hard">Hard</button>
+                </div>
+
+                <!-- Easy Leaderboard -->
+                <div class="leaderboard-section" id="easyLeaderboard">
+                    <h3>🥉 Easy Difficulty</h3>
+                    <div class="leaderboard-list">
+                        <?php
+                        if (!empty($scores['easy'])) {
+                            arsort($scores['easy']);
+                            $rank = 1;
+                            foreach ($scores['easy'] as $player => $score) {
+                                $medal = $rank <= 3 ? ['🥇', '🥈', '🥉'][$rank-1] : $rank;
+                                echo "<div class='leaderboard-item rank-$rank'>";
+                                echo "<span class='rank'>$medal</span>";
+                                echo "<span class='player'>$player</span>";
+                                echo "<span class='score'>₱" . number_format($score) . "</span>";
+                                echo "</div>";
+                                $rank++;
+                            }
+                        } else {
+                            echo "<div class='no-scores'>No scores yet for Easy difficulty.</div>";
                         }
-                    } else {
-                        echo "<div class='no-scores'>No scores yet. Be the first to play!</div>";
-                    } ?>
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Medium Leaderboard -->
+                <div class="leaderboard-section" id="mediumLeaderboard" style="display: none;">
+                    <h3>🥈 Medium Difficulty</h3>
+                    <div class="leaderboard-list">
+                        <?php
+                        if (!empty($scores['medium'])) {
+                            arsort($scores['medium']);
+                            $rank = 1;
+                            foreach ($scores['medium'] as $player => $score) {
+                                $medal = $rank <= 3 ? ['🥇', '🥈', '🥉'][$rank-1] : $rank;
+                                echo "<div class='leaderboard-item rank-$rank'>";
+                                echo "<span class='rank'>$medal</span>";
+                                echo "<span class='player'>$player</span>";
+                                echo "<span class='score'>₱" . number_format($score) . "</span>";
+                                echo "</div>";
+                                $rank++;
+                            }
+                        } else {
+                            echo "<div class='no-scores'>No scores yet for Medium difficulty.</div>";
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Hard Leaderboard -->
+                <div class="leaderboard-section" id="hardLeaderboard" style="display: none;">
+                    <h3>🥇 Hard Difficulty</h3>
+                    <div class="leaderboard-list">
+                        <?php
+                        if (!empty($scores['hard'])) {
+                            arsort($scores['hard']);
+                            $rank = 1;
+                            foreach ($scores['hard'] as $player => $score) {
+                                $medal = $rank <= 3 ? ['🥇', '🥈', '🥉'][$rank-1] : $rank;
+                                echo "<div class='leaderboard-item rank-$rank'>";
+                                echo "<span class='rank'>$medal</span>";
+                                echo "<span class='player'>$player</span>";
+                                echo "<span class='score'>₱" . number_format($score) . "</span>";
+                                echo "</div>";
+                                $rank++;
+                            }
+                        } else {
+                            echo "<div class='no-scores'>No scores yet for Hard difficulty.</div>";
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -208,6 +269,7 @@ if (file_exists("scores.json")) {
                     </div>
                     <form id="saveScoreForm" method="POST" action="save_score.php">
                         <input type="hidden" name="score" id="finalScore">
+                        <input type="hidden" name="difficulty" id="finalDifficulty">
                         <div class="input-group">
                             <input type="text" name="player" id="playerNameSave" placeholder="Enter your name" required>
                             <button type="submit" class="btn btn-primary">

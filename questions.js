@@ -495,6 +495,30 @@ function setupEventListeners() {
             }
         });
     });
+
+    // Leaderboard tab switching
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const difficulty = tab.dataset.difficulty;
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Hide all leaderboard sections
+            document.querySelectorAll('.leaderboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected leaderboard section
+            const selectedSection = document.getElementById(`${difficulty}Leaderboard`);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+        });
+    });
 }
 
 // Build Prize Ladder
@@ -836,12 +860,12 @@ function endGame(won) {
     stopTimer();
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';
-    
+
     if (won) {
         elements.gameOverTitle.textContent = '🎉 Congratulations! You Won!';
         elements.finalScoreDisplay.textContent = `₱${gameState.prize.toLocaleString()}`;
         elements.finalScore.value = gameState.prize;
-        
+
         if (gameState.settings.sound) {
             playSound('victory');
         }
@@ -849,12 +873,18 @@ function endGame(won) {
         elements.gameOverTitle.textContent = 'Game Over!';
         elements.finalScoreDisplay.textContent = `₱${gameState.prize.toLocaleString()}`;
         elements.finalScore.value = gameState.prize;
-        
+
         if (gameState.settings.sound) {
             playSound('gameOver');
         }
     }
-    
+
+    // Set the difficulty in the form
+    const difficultyInput = document.getElementById('finalDifficulty');
+    if (difficultyInput) {
+        difficultyInput.value = gameState.difficulty;
+    }
+
     setTimeout(() => {
         openModal('gameOverModal');
     }, 1000);
