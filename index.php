@@ -49,6 +49,10 @@ if (file_exists("scores.json")) {
                     <span class="score-label">Current Score:</span>
                     <span class="score-value" id="currentScore">₱0</span>
                 </div>
+                <div class="streak-display" id="streakDisplay">
+                    <span class="streak-label">Current Streak:</span>
+                    <span class="streak-value" id="streakValue">0 🔥</span>
+                </div>
             </div>
 
             <div class="lifelines">
