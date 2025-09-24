@@ -343,13 +343,27 @@ let gameState = {
         '50-50': true,
         'phone': true,
         'audience': true,
-        'swap': true
+        'swap': true,
+        'hint': true
     },
     gameActive: false,
     settings: {
         sound: true,
         music: true,
         theme: 'classic'
+    },
+    // New enhancement features
+    streak: 0,
+    isDoublePointsRound: false,
+    achievements: {},
+    statistics: {
+        gamesPlayed: 0,
+        gamesWon: 0,
+        totalScore: 0,
+        bestStreak: 0,
+        questionsAnswered: 0,
+        correctAnswers: 0,
+        averageTime: 0
     }
 };
 
@@ -643,31 +657,70 @@ function selectAnswer(selected) {
     });
     
     if (selected === question.answer) {
-        gameState.prize = prizes[gameState.current];
-        elements.feedbackText.textContent = `✅ Correct! You now have ₱${gameState.prize.toLocaleString()}`;
+        // Calculate streak bonus
+        gameState.streak++;
+        let basePrize = prizes[gameState.current];
+        let streakMultiplier = 1;
+
+        if (gameState.streak >= 10) {
+            streakMultiplier = 5;
+        } else if (gameState.streak >= 5) {
+            streakMultiplier = 3;
+        } else if (gameState.streak >= 3) {
+            streakMultiplier = 2;
+        }
+
+        // Apply double points if it's a double points round
+        if (gameState.isDoublePointsRound) {
+            basePrize *= 2;
+            streakMultiplier *= 2;
+        }
+
+        const finalPrize = basePrize * streakMultiplier;
+        gameState.prize = finalPrize;
+
+        // Update statistics
+        gameState.statistics.questionsAnswered++;
+        gameState.statistics.correctAnswers++;
+        gameState.statistics.totalScore += finalPrize;
+        if (gameState.streak > gameState.statistics.bestStreak) {
+            gameState.statistics.bestStreak = gameState.streak;
+        }
+
+        let streakMessage = '';
+        if (streakMultiplier > 1) {
+            streakMessage = ` 🔥 ${streakMultiplier}x STREAK BONUS!`;
+        }
+
+        elements.feedbackText.textContent = `✅ Correct! You now have ₱${gameState.prize.toLocaleString()}${streakMessage}`;
         elements.feedbackText.style.color = '#00ff00';
-        
+
         if (gameState.settings.sound) {
             playSound('correct');
         }
-        
+
         gameState.current++;
         updatePlayerInfo();
         updatePrizeLadder();
-        
+        updateStreakDisplay();
+
         setTimeout(() => {
             if (gameState.gameActive) {
                 loadQuestion();
             }
         }, 2000);
     } else {
+        // Reset streak on wrong answer
+        gameState.streak = 0;
+        updateStreakDisplay();
+
         elements.feedbackText.textContent = `❌ Wrong! The correct answer was "${question.answer}". Game Over!`;
         elements.feedbackText.style.color = '#ff0000';
-        
+
         if (gameState.settings.sound) {
             playSound('incorrect');
         }
-        
+
         setTimeout(() => {
             endGame(false);
         }, 2000);
