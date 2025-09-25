@@ -1,4 +1,4 @@
-- [ ] Add "animeEdition" to questions.js with 20+ anime questions
+- [x] Add "animeEdition" to questions.js with 20+ anime questions
 - [ ] Update index.php: Add "Anime Edition" to difficulty select
 - [ ] Update index.php: Add tab and section for Anime Edition in leaderboard
 - [ ] Update save_score.php: Handle "animeEdition" scores
