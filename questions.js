@@ -323,6 +323,206 @@ const questions = {
             answer: "Ati-Atihan",
             category: "Philippines Culture"
         }
+    ],
+    animeEdition: [
+        {
+            q: "🌀 What is the name of Naruto's father?",
+            options: ["Minato Namikaze", "Kakashi Hatake", "Jiraiya", "Hiruzen Sarutobi"],
+            answer: "Minato Namikaze",
+            category: "Naruto"
+        },
+        {
+            q: "🏴‍☠️ Who is the captain of the Straw Hat Pirates?",
+            options: ["Monkey D. Luffy", "Roronoa Zoro", "Sanji", "Nami"],
+            answer: "Monkey D. Luffy",
+            category: "One Piece"
+        },
+        {
+            q: "🦍 What is Goku's Saiyan name?",
+            options: ["Kakarot", "Vegeta", "Bardock", "Gohan"],
+            answer: "Kakarot",
+            category: "Dragon Ball"
+        },
+        {
+            q: "⚔️ In Attack on Titan, what are the giant creatures called?",
+            options: ["Titans", "Giants", "Behemoths", "Colossals"],
+            answer: "Titans",
+            category: "Attack on Titan"
+        },
+        {
+            q: "📓 What is the name of Light Yagami's notebook?",
+            options: ["Death Note", "Life Note", "Fate Book", "Judgment Diary"],
+            answer: "Death Note",
+            category: "Death Note"
+        },
+        {
+            q: "💪 Who is the protagonist of My Hero Academia?",
+            options: ["Izuku Midoriya", "Katsuki Bakugo", "Shoto Todoroki", "All Might"],
+            answer: "Izuku Midoriya",
+            category: "My Hero Academia"
+        },
+        {
+            q: "🎯 What is the highest rank in Hunter x Hunter?",
+            options: ["Triple Hunter", "Double Hunter", "Hunter", "Master Hunter"],
+            answer: "Triple Hunter",
+            category: "Hunter x Hunter"
+        },
+        {
+            q: "⚗️ In Fullmetal Alchemist, what is Edward Elric's title?",
+            options: ["Fullmetal Alchemist", "Flame Alchemist", "Ice Alchemist", "Steel Alchemist"],
+            answer: "Fullmetal Alchemist",
+            category: "Fullmetal Alchemist"
+        },
+        {
+            q: "👊 Who is the strongest in One Punch Man?",
+            options: ["Saitama", "Genos", "Bang", "Tatsumaki"],
+            answer: "Saitama",
+            category: "One Punch Man"
+        },
+        {
+            q: "💰 What is the currency in Dragon Ball?",
+            options: ["Zeni", "Berry", "Beli", "Gold"],
+            answer: "Zeni",
+            category: "Dragon Ball"
+        },
+        {
+            q: "🌊 In Demon Slayer, what is Tanjiro's breathing style?",
+            options: ["Water Breathing", "Fire Breathing", "Thunder Breathing", "Wind Breathing"],
+            answer: "Water Breathing",
+            category: "Demon Slayer"
+        },
+        {
+            q: "👹 Who is the creator of the Death Note?",
+            options: ["Ryuk", "Rem", "Light Yagami", "L"],
+            answer: "Ryuk",
+            category: "Death Note"
+        },
+        {
+            q: "⚡ What is All Might's quirk in My Hero Academia?",
+            options: ["One For All", "All For One", "Super Strength", "Flight"],
+            answer: "One For All",
+            category: "My Hero Academia"
+        },
+        {
+            q: "👁️ In Naruto, what is the Sharingan?",
+            options: ["A type of eye technique", "A summoning jutsu", "A transformation", "A weapon"],
+            answer: "A type of eye technique",
+            category: "Naruto"
+        },
+        {
+            q: "🏴‍☠️ Who is the Pirate King in One Piece?",
+            options: ["Gol D. Roger", "Monkey D. Luffy", "Whitebeard", "Shanks"],
+            answer: "Gol D. Roger",
+            category: "One Piece"
+        },
+        {
+            q: "🛡️ In Attack on Titan, what is the name of the organization that fights Titans?",
+            options: ["Survey Corps", "Military Police", "Garrison", "Marleyan Warriors"],
+            answer: "Survey Corps",
+            category: "Attack on Titan"
+        },
+        {
+            q: "🎮 In Sword Art Online, what is the virtual reality game called?",
+            options: ["Sword Art Online", "Alfheim Online", "Gun Gale Online", "Underworld"],
+            answer: "Sword Art Online",
+            category: "Sword Art Online"
+        },
+        {
+            q: "👑 Who is the main antagonist in Dragon Ball Z?",
+            options: ["Frieza", "Cell", "Buu", "Beerus"],
+            answer: "Frieza",
+            category: "Dragon Ball"
+        },
+        {
+            q: "🏐 In Haikyuu, what position does Hinata Shoyo play?",
+            options: ["Middle Blocker", "Setter", "Wing Spiker", "Libero"],
+            answer: "Middle Blocker",
+            category: "Haikyuu"
+        },
+        {
+            q: "👻 What is the power system in JoJo's Bizarre Adventure?",
+            options: ["Stands", "Quirks", "Nen", "Chakra"],
+            answer: "Stands",
+            category: "JoJo's Bizarre Adventure"
+        },
+        {
+            q: "🔥 In Fairy Tail, what is Natsu's magic type?",
+            options: ["Fire Dragon Slayer", "Ice Make", "Sky Dragon Slayer", "Lightning Dragon Slayer"],
+            answer: "Fire Dragon Slayer",
+            category: "Fairy Tail"
+        },
+        {
+            q: "🧙‍♂️ In One Piece, what is the name of the World Government organization?",
+            options: ["Cipher Pol", "Navy", "Marines", "Seven Warlords"],
+            answer: "Cipher Pol",
+            category: "One Piece"
+        },
+        {
+            q: "🦸‍♂️ In My Hero Academia, what is Katsuki Bakugo's hero name?",
+            options: ["King Explosion Murder", "DynaMight", "Great Explosion Murder God Dynamight", "Explosion Boy"],
+            answer: "Great Explosion Murder God Dynamight",
+            category: "My Hero Academia"
+        },
+        {
+            q: "🐉 In Dragon Ball, what is the name of Goku's first son?",
+            options: ["Gohan", "Goten", "Trunks", "Pan"],
+            answer: "Gohan",
+            category: "Dragon Ball"
+        },
+        {
+            q: "⚔️ In Attack on Titan, who is known as the 'Humanity's Strongest Soldier'?",
+            options: ["Levi Ackerman", "Erwin Smith", "Mikasa Ackerman", "Armin Arlert"],
+            answer: "Levi Ackerman",
+            category: "Attack on Titan"
+        },
+        {
+            q: "📖 In Death Note, what is L's real name?",
+            options: ["L Lawliet", "Light Yagami", "Misa Amane", "Near"],
+            answer: "L Lawliet",
+            category: "Death Note"
+        },
+        {
+            q: "🏃‍♂️ In Naruto, what is the name of the village hidden in the leaves?",
+            options: ["Konoha", "Suna", "Kiri", "Iwa"],
+            answer: "Konoha",
+            category: "Naruto"
+        },
+        {
+            q: "🍖 In One Piece, what is Sanji's dream?",
+            options: ["To find the All Blue", "To become Pirate King", "To find a map", "To cook the best meal"],
+            answer: "To find the All Blue",
+            category: "One Piece"
+        },
+        {
+            q: "🦸‍♀️ In My Hero Academia, what is Ochaco Uraraka's quirk?",
+            options: ["Zero Gravity", "Super Strength", "Invisibility", "Telekinesis"],
+            answer: "Zero Gravity",
+            category: "My Hero Academia"
+        },
+        {
+            q: "🎭 In Hunter x Hunter, what is Gon Freecss's Nen type?",
+            options: ["Enhancer", "Transmuter", "Emitter", "Manipulator"],
+            answer: "Enhancer",
+            category: "Hunter x Hunter"
+        },
+        {
+            q: "🧟 In Attack on Titan, what is the name of the wall that protects humanity?",
+            options: ["Wall Maria", "Wall Rose", "Wall Sina", "All of the above"],
+            answer: "All of the above",
+            category: "Attack on Titan"
+        },
+        {
+            q: "📺 In Sword Art Online, how many players died in the beta test?",
+            options: ["2,000", "5,000", "10,000", "None"],
+            answer: "2,000",
+            category: "Sword Art Online"
+        },
+        {
+            q: "👊 In One Punch Man, what is Saitama's training routine?",
+            options: ["100 push-ups, 100 sit-ups, 100 squats, 10km run", "Running 100km", "Lifting weights", "Meditation"],
+            answer: "100 push-ups, 100 sit-ups, 100 squats, 10km run",
+            category: "One Punch Man"
+        }
     ]
 };
 
