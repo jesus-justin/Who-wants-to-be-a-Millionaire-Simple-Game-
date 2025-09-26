@@ -255,6 +255,30 @@ if (file_exists("scores.json")) {
                     ?>
                 </div>
             </div>
+
+            <!-- Anime Edition Leaderboard -->
+            <div class="leaderboard-section" id="animeEditionLeaderboard" style="display: none;">
+                <h3>🎌 Anime Edition</h3>
+                <div class="leaderboard-list">
+                    <?php
+                    if (!empty($scores['animeEdition'])) {
+                        arsort($scores['animeEdition']);
+                        $rank = 1;
+                        foreach ($scores['animeEdition'] as $player => $score) {
+                            $medal = $rank <= 3 ? ['🥇', '🥈', '🥉'][$rank-1] : $rank;
+                            echo "<div class='leaderboard-item rank-$rank'>";
+                            echo "<span class='rank'>$medal</span>";
+                            echo "<span class='player'>$player</span>";
+                            echo "<span class='score'>₱" . number_format($score) . "</span>";
+                            echo "</div>";
+                            $rank++;
+                        }
+                    } else {
+                        echo "<div class='no-scores'>No scores yet for Anime Edition.</div>";
+                    }
+                    ?>
+                </div>
+            </div>
             </div>
         </div>
     </div>

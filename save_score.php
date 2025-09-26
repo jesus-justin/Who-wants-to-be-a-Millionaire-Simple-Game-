@@ -1,4 +1,4 @@
-<?php
+ dd<?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $player = htmlspecialchars($_POST["player"]);
     $score = intval($_POST["score"]);
@@ -21,6 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Initialize difficulty arrays if they don't exist
+    if (!isset($scores['easy'])) $scores['easy'] = [];
+    if (!isset($scores['medium'])) $scores['medium'] = [];
+    if (!isset($scores['hard'])) $scores['hard'] = [];
+    if (!isset($scores['animeEdition'])) $scores['animeEdition'] = [];
     if (!isset($scores['easy'])) $scores['easy'] = [];
     if (!isset($scores['medium'])) $scores['medium'] = [];
     if (!isset($scores['hard'])) $scores['hard'] = [];
