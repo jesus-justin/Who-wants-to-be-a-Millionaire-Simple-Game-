@@ -1,4 +1,4 @@
- dd<?php
+<?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $player = htmlspecialchars($_POST["player"]);
     $score = intval($_POST["score"]);
@@ -25,9 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!isset($scores['medium'])) $scores['medium'] = [];
     if (!isset($scores['hard'])) $scores['hard'] = [];
     if (!isset($scores['animeEdition'])) $scores['animeEdition'] = [];
-    if (!isset($scores['easy'])) $scores['easy'] = [];
-    if (!isset($scores['medium'])) $scores['medium'] = [];
-    if (!isset($scores['hard'])) $scores['hard'] = [];
 
     // Save only if score is higher for this difficulty
     if (!isset($scores[$difficulty][$player]) || $score > $scores[$difficulty][$player]) {
