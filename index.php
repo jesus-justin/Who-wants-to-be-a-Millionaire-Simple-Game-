@@ -92,8 +92,9 @@ if (file_exists("scores.json")) {
                     <div class="question-header">
                         <span class="question-number" id="questionNumber">Question 1</span>
                         <span class="question-prize" id="questionPrize">₱1,000</span>
-                    <span class="question-timer" id="questionTimer">⏱️ 30</span>
+                        <span class="question-timer" id="questionTimer">⏱️ 30</span>
                     </div>
+                    <div class="question-category" id="questionCategory">Category: General Knowledge</div>
                     <div class="question-text" id="questionText">Loading question...</div>
                 </div>
 
