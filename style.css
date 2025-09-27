@@ -326,6 +326,15 @@ body {
     font-size: 1.3rem;
 }
 
+.question-category {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0.9;
+}
+
 .question-text {
     font-size: 1.4rem;
     line-height: 1.6;

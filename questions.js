@@ -573,6 +573,7 @@ const elements = {
     questionNumber: document.getElementById('questionNumber'),
     questionPrize: document.getElementById('questionPrize'),
     questionTimer: document.getElementById('questionTimer'),
+    questionCategory: document.getElementById('questionCategory'),
     optionsContainer: document.getElementById('optionsContainer'),
     feedbackText: document.getElementById('feedbackText'),
     currentScore: document.getElementById('currentScore'),
@@ -807,10 +808,11 @@ function loadQuestion() {
     }
 
     const question = gameState.currentQuestions[gameState.current];
-    
+
     elements.questionNumber.textContent = `Question ${gameState.current + 1}`;
     elements.questionPrize.textContent = `₱${prizes[gameState.current].toLocaleString()}`;
     elements.questionText.textContent = question.q;
+    elements.questionCategory.textContent = `Category: ${question.category}`;
     elements.feedbackText.textContent = '';
     
     // Create options
