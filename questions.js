@@ -90,6 +90,36 @@ const questions = {
         options: ["Gloria Macapagal-Arroyo", "Rodrigo Duterte", "Benigno Aquino III", "Joseph Estrada"],
         answer: "Rodrigo Duterte",
         category: "Philippines Current Events"
+    },
+    {
+        q: "🌍 What is the capital of Australia?",
+        options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+        answer: "Canberra",
+        category: "Geography"
+    },
+    {
+        q: "🦏 What is the largest animal in the world?",
+        options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+        answer: "Blue Whale",
+        category: "Nature"
+    },
+    {
+        q: "💚 What color is an emerald?",
+        options: ["Red", "Blue", "Green", "Yellow"],
+        answer: "Green",
+        category: "General Knowledge"
+    },
+    {
+        q: "🇵🇭 What is the national sport of the Philippines?",
+        options: ["Basketball", "Soccer", "Boxing", "Volleyball"],
+        answer: "Boxing",
+        category: "Philippines Culture"
+    },
+    {
+        q: "☀️ Which planet is known as the Red Planet?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars",
+        category: "Science"
     }
     ],
     medium: [
