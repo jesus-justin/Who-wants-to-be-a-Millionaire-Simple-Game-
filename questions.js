@@ -225,12 +225,42 @@ const questions = {
             answer: "343 m/s",
             category: "Science"
         },
-        {
-            q: "🇵🇭 Which Philippine city is known as the 'Summer Capital'?",
-            options: ["Baguio", "Tagaytay", "Banaue", "Sagada"],
-            answer: "Baguio",
-            category: "Philippines Geography"
-        }
+    {
+        q: "🇵🇭 Which Philippine city is known as the 'Summer Capital'?",
+        options: ["Baguio", "Tagaytay", "Banaue", "Sagada"],
+        answer: "Baguio",
+        category: "Philippines Geography"
+    },
+    {
+        q: "📚 Who wrote the novel 'Pride and Prejudice'?",
+        options: ["Jane Austen", "Charlotte Brontë", "Emily Brontë", "George Eliot"],
+        answer: "Jane Austen",
+        category: "Literature"
+    },
+    {
+        q: "⚡ What is the chemical symbol for silver?",
+        options: ["Si", "Ag", "Au", "Fe"],
+        answer: "Ag",
+        category: "Science"
+    },
+    {
+        q: "🏛️ In which year did the Titanic sink?",
+        options: ["1912", "1910", "1914", "1916"],
+        answer: "1912",
+        category: "History"
+    },
+    {
+        q: "🇵🇭 What is the name of the Philippine's largest lake?",
+        options: ["Laguna de Bay", "Lake Lanao", "Lake Taal", "Lake Naujan"],
+        answer: "Laguna de Bay",
+        category: "Philippines Geography"
+    },
+    {
+        q: "🔬 What is the process by which plants make their own food?",
+        options: ["Photosynthesis", "Respiration", "Transpiration", "Osmosis"],
+        answer: "Photosynthesis",
+        category: "Science"
+    }
     ],
     hard: [
         {
@@ -347,12 +377,42 @@ const questions = {
             answer: "110 million",
             category: "Philippines Demographics"
         },
-        {
-            q: "🇵🇭 Which Philippine festival is known as the 'Mother of All Festivals'?",
-            options: ["Sinulog", "Ati-Atihan", "Dinagyang", "MassKara"],
-            answer: "Ati-Atihan",
-            category: "Philippines Culture"
-        }
+    {
+        q: "🇵🇭 Which Philippine festival is known as the 'Mother of All Festivals'?",
+        options: ["Sinulog", "Ati-Atihan", "Dinagyang", "MassKara"],
+        answer: "Ati-Atihan",
+        category: "Philippines Culture"
+    },
+    {
+        q: "🧬 What is the genetic material in cells?",
+        options: ["DNA", "RNA", "Protein", "Carbohydrate"],
+        answer: "DNA",
+        category: "Biology"
+    },
+    {
+        q: "⚛️ What is the center of an atom called?",
+        options: ["Nucleus", "Electron", "Proton", "Neutron"],
+        answer: "Nucleus",
+        category: "Physics"
+    },
+    {
+        q: "🇵🇭 What is the name of the Philippine's first satellite?",
+        options: ["Diwata-1", "Agila-1", "Mabuhay-1", "Filipino-1"],
+        answer: "Diwata-1",
+        category: "Philippines Science"
+    },
+    {
+        q: "🏛️ Who was the first President of the United States?",
+        options: ["George Washington", "Thomas Jefferson", "Abraham Lincoln", "John Adams"],
+        answer: "George Washington",
+        category: "History"
+    },
+    {
+        q: "🔬 What is the chemical formula for water?",
+        options: ["H2O", "CO2", "O2", "H2O2"],
+        answer: "H2O",
+        category: "Chemistry"
+    }
     ],
     animeEdition: [
         {
