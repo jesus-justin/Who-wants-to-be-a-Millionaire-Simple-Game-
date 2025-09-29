@@ -32,15 +32,15 @@ if (file_exists("scores.json")) {
                     <i class="fas fa-medal"></i>
                     Leaderboard
                 </button>
-                <button class="achievements-btn" id="achievementsBtn">
+                <button class="settings-btn" id="achievementsBtn">
                     <i class="fas fa-star"></i>
                     Achievements
                 </button>
-                <button class="daily-challenge-btn" id="dailyChallengeBtn">
+                <button class="settings-btn" id="dailyChallengeBtn">
                     <i class="fas fa-calendar-day"></i>
                     Daily Challenge
                 </button>
-                <button class="random-event-btn" id="randomEventBtn">
+                <button class="settings-btn" id="randomEventBtn">
                     <i class="fas fa-bolt"></i>
                     Random Event
                 </button>
@@ -338,7 +338,7 @@ if (file_exists("scores.json")) {
             </div>
 
     <!-- Achievements Modal -->
-    <div class="modal" id="achievementsModal">
+    <div class="modal" id="achievementsModal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-star"></i> Achievements</h2>
@@ -375,7 +375,7 @@ if (file_exists("scores.json")) {
     </div>
 
     <!-- Daily Challenge Modal -->
-    <div class="modal" id="dailyChallengeModal">
+    <div class="modal" id="dailyChallengeModal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-calendar-day"></i> Daily Challenge</h2>
@@ -393,7 +393,7 @@ if (file_exists("scores.json")) {
     </div>
 
     <!-- Random Event Modal -->
-    <div class="modal" id="randomEventModal">
+    <div class="modal" id="randomEventModal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-bolt"></i> Random Event</h2>
@@ -403,7 +403,7 @@ if (file_exists("scores.json")) {
             </div>
             <div class="modal-body">
                 <div id="randomEventContent">
-                    <p>A surprise event appears! Double points for the next question!</p>
+                    <p id="randomEventText">A surprise event appears! Double points for the next question!</p>
                 </div>
             </div>
         </div>
@@ -411,29 +411,73 @@ if (file_exists("scores.json")) {
 
     <script src="questions.js"></script>
     <script>
+    // Utility to show/hide modals
+    function showModal(id) {
+        document.getElementById(id).style.display = 'block';
+        document.body.classList.add('modal-open');
+    }
+    function hideModal(id) {
+        document.getElementById(id).style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
     // Achievements modal logic
     document.getElementById('achievementsBtn').onclick = function() {
-        document.getElementById('achievementsModal').style.display = 'block';
+        showModal('achievementsModal');
     };
     document.getElementById('closeAchievements').onclick = function() {
-        document.getElementById('achievementsModal').style.display = 'none';
+        hideModal('achievementsModal');
     };
 
     // Daily Challenge modal logic
     document.getElementById('dailyChallengeBtn').onclick = function() {
-        document.getElementById('dailyChallengeModal').style.display = 'block';
+        showModal('dailyChallengeModal');
     };
     document.getElementById('closeDailyChallenge').onclick = function() {
-        document.getElementById('dailyChallengeModal').style.display = 'none';
+        hideModal('dailyChallengeModal');
+    };
+    document.getElementById('startDailyChallengeBtn').onclick = function() {
+        hideModal('dailyChallengeModal');
+        // Start daily challenge logic here
+        alert('Daily Challenge started! Try to answer 10 questions correctly!');
+        // You can trigger your game logic here
     };
 
     // Random Event modal logic
     document.getElementById('randomEventBtn').onclick = function() {
-        document.getElementById('randomEventModal').style.display = 'block';
+        // Pick a random event for fun
+        const events = [
+            "Double points for the next question!",
+            "Lose a lifeline!",
+            "Instant bonus: ₱5,000!",
+            "Skip the next question for free!",
+            "Triple points for the next correct answer!"
+        ];
+        const eventText = events[Math.floor(Math.random() * events.length)];
+        document.getElementById('randomEventText').innerText = eventText;
+        showModal('randomEventModal');
     };
     document.getElementById('closeRandomEvent').onclick = function() {
-        document.getElementById('randomEventModal').style.display = 'none';
+        hideModal('randomEventModal');
     };
+
+    // Modal close on overlay click and ESC key
+    document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") {
+            document.querySelectorAll('.modal').forEach(function(modal) {
+                modal.style.display = 'none';
+            });
+            document.body.classList.remove('modal-open');
+        }
+    });
 
     // Difficulty tab logic
     const tabs = document.querySelectorAll('.tab-btn');
