@@ -32,6 +32,18 @@ if (file_exists("scores.json")) {
                     <i class="fas fa-medal"></i>
                     Leaderboard
                 </button>
+                <button class="achievements-btn" id="achievementsBtn">
+                    <i class="fas fa-star"></i>
+                    Achievements
+                </button>
+                <button class="daily-challenge-btn" id="dailyChallengeBtn">
+                    <i class="fas fa-calendar-day"></i>
+                    Daily Challenge
+                </button>
+                <button class="random-event-btn" id="randomEventBtn">
+                    <i class="fas fa-bolt"></i>
+                    Random Event
+                </button>
             </div>
         </div>
     </header>
@@ -141,6 +153,17 @@ if (file_exists("scores.json")) {
                         <option value="medium" selected>Medium</option>
                         <option value="hard">Hard</option>
                         <option value="animeEdition">Anime Edition</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="categorySelect">Category:</label>
+                    <select id="categorySelect">
+                        <option value="general" selected>General Knowledge</option>
+                        <option value="science">Science</option>
+                        <option value="history">History</option>
+                        <option value="sports">Sports</option>
+                        <option value="anime">Anime</option>
+                        <!-- Add more categories as needed -->
                     </select>
                 </div>
                 <div class="setting-group">
@@ -314,6 +337,179 @@ if (file_exists("scores.json")) {
                 </div>
             </div>
 
+    <!-- Achievements Modal -->
+    <div class="modal" id="achievementsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-star"></i> Achievements</h2>
+                <button class="close-btn" id="closeAchievements">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="achievements-list" id="achievementsList">
+                    <div class="achievement-item">
+                        <span class="achievement-icon">🏆</span>
+                        <span class="achievement-title">First Win</span>
+                        <span class="achievement-desc">Win your first game.</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="achievement-icon">🔥</span>
+                        <span class="achievement-title">Hot Streak</span>
+                        <span class="achievement-desc">Answer 5 questions correctly in a row.</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="achievement-icon">💰</span>
+                        <span class="achievement-title">Millionaire</span>
+                        <span class="achievement-desc">Reach ₱1,000,000.</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="achievement-icon">🎌</span>
+                        <span class="achievement-title">Anime Master</span>
+                        <span class="achievement-desc">Win Anime Edition.</span>
+                    </div>
+                    <!-- Add more achievements as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Challenge Modal -->
+    <div class="modal" id="dailyChallengeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-day"></i> Daily Challenge</h2>
+                <button class="close-btn" id="closeDailyChallenge">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="dailyChallengeContent">
+                    <p>Today's challenge: Answer 10 questions correctly in any category!</p>
+                    <button class="btn btn-primary" id="startDailyChallengeBtn">Start Challenge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Random Event Modal -->
+    <div class="modal" id="randomEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-bolt"></i> Random Event</h2>
+                <button class="close-btn" id="closeRandomEvent">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="randomEventContent">
+                    <p>A surprise event appears! Double points for the next question!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="questions.js"></script>
+    <script>
+    // Achievements modal logic
+    document.getElementById('achievementsBtn').onclick = function() {
+        document.getElementById('achievementsModal').style.display = 'block';
+    };
+    document.getElementById('closeAchievements').onclick = function() {
+        document.getElementById('achievementsModal').style.display = 'none';
+    };
+
+    // Daily Challenge modal logic
+    document.getElementById('dailyChallengeBtn').onclick = function() {
+        document.getElementById('dailyChallengeModal').style.display = 'block';
+    };
+    document.getElementById('closeDailyChallenge').onclick = function() {
+        document.getElementById('dailyChallengeModal').style.display = 'none';
+    };
+
+    // Random Event modal logic
+    document.getElementById('randomEventBtn').onclick = function() {
+        document.getElementById('randomEventModal').style.display = 'block';
+    };
+    document.getElementById('closeRandomEvent').onclick = function() {
+        document.getElementById('randomEventModal').style.display = 'none';
+    };
+
+    // Difficulty tab logic
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const difficulty = this.getAttribute('data-difficulty');
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.leaderboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(difficulty + 'Leaderboard').style.display = 'block';
+        });
+    });
+
+    // Save settings logic
+    document.getElementById('saveSettings').onclick = function() {
+        const playerName = document.getElementById('playerNameInput').value;
+        const difficulty = document.getElementById('difficultySelect').value;
+        const category = document.getElementById('categorySelect').value;
+        const soundEnabled = document.getElementById('soundToggle').checked;
+        const musicEnabled = document.getElementById('musicToggle').checked;
+        const theme = document.getElementById('themeSelect').value;
+
+        // Save to localStorage (or send to server)
+        localStorage.setItem('playerName', playerName);
+        localStorage.setItem('difficulty', difficulty);
+        localStorage.setItem('category', category);
+        localStorage.setItem('soundEnabled', soundEnabled);
+        localStorage.setItem('musicEnabled', musicEnabled);
+        localStorage.setItem('theme', theme);
+
+        // Close modal
+        document.getElementById('settingsModal').style.display = 'none';
+
+        // Update UI immediately
+        document.getElementById('playerName').innerText = playerName;
+        // Difficulty and category will be applied when starting a new game
+    };
+
+    // Reset settings logic
+    document.getElementById('resetSettings').onclick = function() {
+        // Reset to default values
+        document.getElementById('playerNameInput').value = '';
+        document.getElementById('difficultySelect').value = 'medium';
+        document.getElementById('categorySelect').value = 'general';
+        document.getElementById('soundToggle').checked = true;
+        document.getElementById('musicToggle').checked = true;
+        document.getElementById('themeSelect').value = 'classic';
+    };
+
+    // Start game button logic
+    document.getElementById('startGameBtn').onclick = function() {
+        // Get settings
+        const playerName = localStorage.getItem('playerName') || 'Player';
+        const difficulty = localStorage.getItem('difficulty') || 'medium';
+        const category = localStorage.getItem('category') || 'general';
+
+        // Update UI
+        document.getElementById('playerName').innerText = playerName;
+        document.getElementById('difficultySelect').value = difficulty;
+        document.getElementById('categorySelect').value = category;
+
+        // Load first question
+        loadQuestion(1, difficulty, category);
+    };
+
+    // Dummy function for loading questions (replace with real implementation)
+    function loadQuestion(questionNumber, difficulty, category) {
+        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
+        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
+        document.getElementById('questionCategory').innerText = 'Category: ' + category;
+        document.getElementById('questionText').innerText = 'This is a ' + difficulty + ' question in ' + category + '.';
+
+        // TODO: Load real question data and options
+    }
+    </script>
 </body>
 </html>
