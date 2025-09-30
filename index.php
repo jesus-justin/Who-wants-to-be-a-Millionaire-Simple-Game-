@@ -95,6 +95,33 @@ if (file_exists("scores.json")) {
                     <!-- Prize levels will be populated by JavaScript -->
                 </div>
             </div>
+
+            <!-- Achievement Bar -->
+            <div class="achievement-bar">
+                <h4>Achievements</h4>
+                <div id="sidebarAchievements">
+                    <div class="achievement-bar-item" data-achievement="firstWin">
+                        <span class="achievement-icon">🏆</span>
+                        <span class="achievement-title">First Win</span>
+                    </div>
+                    <div class="achievement-bar-item" data-achievement="hotStreak">
+                        <span class="achievement-icon">🔥</span>
+                        <span class="achievement-title">Hot Streak</span>
+                    </div>
+                    <div class="achievement-bar-item" data-achievement="millionaire">
+                        <span class="achievement-icon">💰</span>
+                        <span class="achievement-title">Millionaire</span>
+                    </div>
+                    <div class="achievement-bar-item" data-achievement="animeMaster">
+                        <span class="achievement-icon">🎌</span>
+                        <span class="achievement-title">Anime Master</span>
+                    </div>
+                    <div class="achievement-bar-item" data-achievement="under1Sec">
+                        <span class="achievement-icon">⚡</span>
+                        <span class="achievement-title">Finish Under 1 Second</span>
+                    </div>
+                </div>
+            </div>
         </aside>
 
         <!-- Game Area -->
@@ -348,30 +375,40 @@ if (file_exists("scores.json")) {
             </div>
             <div class="modal-body">
                 <div class="achievements-list" id="achievementsList">
-                    <div class="achievement-item">
+                    <div class="achievement-item" data-achievement="firstWin">
                         <span class="achievement-icon">🏆</span>
                         <span class="achievement-title">First Win</span>
                         <span class="achievement-desc">Win your first game.</span>
                     </div>
-                    <div class="achievement-item">
+                    <div class="achievement-item" data-achievement="hotStreak">
                         <span class="achievement-icon">🔥</span>
                         <span class="achievement-title">Hot Streak</span>
                         <span class="achievement-desc">Answer 5 questions correctly in a row.</span>
                     </div>
-                    <div class="achievement-item">
+                    <div class="achievement-item" data-achievement="millionaire">
                         <span class="achievement-icon">💰</span>
                         <span class="achievement-title">Millionaire</span>
                         <span class="achievement-desc">Reach ₱1,000,000.</span>
                     </div>
-                    <div class="achievement-item">
+                    <div class="achievement-item" data-achievement="animeMaster">
                         <span class="achievement-icon">🎌</span>
                         <span class="achievement-title">Anime Master</span>
                         <span class="achievement-desc">Win Anime Edition.</span>
                     </div>
-                    <!-- Add more achievements as needed -->
+                    <div class="achievement-item" data-achievement="under1Sec">
+                        <span class="achievement-icon">⚡</span>
+                        <span class="achievement-title">Finish Under 1 Second</span>
+                        <span class="achievement-desc">Answer a question in under 1 second.</span>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div id="achievementPopup" style="display:none;position:fixed;top:20px;right:20px;z-index:9999;background:#222;color:#fff;padding:16px 24px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.2);font-size:18px;">
+        <span id="achievementPopupIcon"></span>
+        <span id="achievementPopupText"></span>
     </div>
 
     <!-- Daily Challenge Modal -->
@@ -554,6 +591,154 @@ if (file_exists("scores.json")) {
 
         // TODO: Load real question data and options
     }
+
+    // Achievements logic
+    const achievements = {
+        firstWin: { icon: "🏆", title: "First Win", desc: "Win your first game." },
+        hotStreak: { icon: "🔥", title: "Hot Streak", desc: "Answer 5 questions correctly in a row." },
+        millionaire: { icon: "💰", title: "Millionaire", desc: "Reach ₱1,000,000." },
+        animeMaster: { icon: "🎌", title: "Anime Master", desc: "Win Anime Edition." },
+        under1Sec: { icon: "⚡", title: "Finish Under 1 Second", desc: "Answer a question in under 1 second." }
+    };
+
+    function getAchievements() {
+        return JSON.parse(localStorage.getItem('achievements') || '{}');
+    }
+    function setAchievements(obj) {
+        localStorage.setItem('achievements', JSON.stringify(obj));
+    }
+
+    function updateAchievementBar() {
+        const unlocked = getAchievements();
+        document.querySelectorAll('.achievement-bar-item').forEach(item => {
+            const key = item.getAttribute('data-achievement');
+            if (unlocked[key]) {
+                item.classList.add('unlocked');
+                item.style.filter = 'none';
+                item.style.opacity = '1';
+            } else {
+                item.classList.remove('unlocked');
+                item.style.filter = 'grayscale(1)';
+                item.style.opacity = '0.5';
+            }
+        });
+    }
+    function updateAchievementsModal() {
+        const unlocked = getAchievements();
+        document.querySelectorAll('.achievement-item').forEach(item => {
+            const key = item.getAttribute('data-achievement');
+            if (unlocked[key]) {
+                item.classList.add('unlocked');
+                item.style.filter = 'none';
+                item.style.opacity = '1';
+            } else {
+                item.classList.remove('unlocked');
+                item.style.filter = 'grayscale(1)';
+                item.style.opacity = '0.5';
+            }
+        });
+    }
+    function unlockAchievement(key) {
+        const unlocked = getAchievements();
+        if (!unlocked[key]) {
+            unlocked[key] = true;
+            setAchievements(unlocked);
+            updateAchievementBar();
+            updateAchievementsModal();
+            showAchievementPopup(key);
+        }
+    }
+    function showAchievementPopup(key) {
+        const ach = achievements[key];
+        document.getElementById('achievementPopupIcon').innerText = ach.icon;
+        document.getElementById('achievementPopupText').innerText = `Achievement Unlocked: ${ach.title}`;
+        const popup = document.getElementById('achievementPopup');
+        popup.style.display = 'block';
+        setTimeout(() => { popup.style.display = 'none'; }, 2500);
+    }
+
+    // Call on page load
+    updateAchievementBar();
+    updateAchievementsModal();
+
+    // Example integration: unlock "Finish Under 1 Second" when answering a question quickly
+    // Replace this with your real question timer logic
+    let questionStartTime = null;
+    function loadQuestion(questionNumber, difficulty, category) {
+        // ...existing code...
+        questionStartTime = Date.now();
+        // ...existing code...
+    }
+    // Call this when player answers a question
+    function onAnswerSelected() {
+        // ...existing code...
+        const answerTime = (Date.now() - questionStartTime) / 1000;
+        if (answerTime < 1) unlockAchievement('under1Sec');
+        // Example: unlock hotStreak if streakValue >= 5
+        if (parseInt(document.getElementById('streakValue').innerText) >= 5) unlockAchievement('hotStreak');
+        // ...existing code...
+    }
+    // Example: unlock firstWin and millionaire at game end
+    function onGameEnd(finalScore, difficulty, category) {
+        if (finalScore > 0) unlockAchievement('firstWin');
+        if (finalScore >= 1000000) unlockAchievement('millionaire');
+        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
+    }
+
     </script>
+    <style>
+    /* Achievement bar styling */
+    .achievement-bar {
+        margin-top: 24px;
+        background: #222;
+        border-radius: 8px;
+        padding: 12px;
+        color: #fff;
+    }
+    .achievement-bar-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        opacity: 0.5;
+        filter: grayscale(1);
+        transition: opacity 0.3s, filter 0.3s;
+    }
+    .achievement-bar-item.unlocked {
+        opacity: 1;
+        filter: none;
+    }
+    .achievement-bar-item .achievement-icon {
+        font-size: 22px;
+        margin-right: 8px;
+    }
+    .achievement-bar-item .achievement-title {
+        font-size: 15px;
+    }
+    /* Achievements modal styling */
+    .achievement-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        opacity: 0.5;
+        filter: grayscale(1);
+        transition: opacity 0.3s, filter 0.3s;
+    }
+    .achievement-item.unlocked {
+        opacity: 1;
+        filter: none;
+    }
+    .achievement-item .achievement-icon {
+        font-size: 28px;
+        margin-right: 12px;
+    }
+    .achievement-item .achievement-title {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+    .achievement-item .achievement-desc {
+        font-size: 14px;
+        color: #ccc;
+    }
+    </style>
 </body>
 </html>
