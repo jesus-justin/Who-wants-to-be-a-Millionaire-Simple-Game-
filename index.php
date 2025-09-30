@@ -735,10 +735,15 @@ if (file_exists("scores.json")) {
 
     // Start game button logic
     document.getElementById('startGameBtn').onclick = function() {
-        // Get settings
-        const playerName = localStorage.getItem('playerName') || 'Player';
-        const difficulty = localStorage.getItem('difficulty') || 'medium';
-        const category = localStorage.getItem('category') || 'general';
+        // Get settings from the settings modal (not just localStorage)
+        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
+        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
+        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
+
+        // Save current settings to localStorage for consistency
+        localStorage.setItem('playerName', playerName);
+        localStorage.setItem('difficulty', difficulty);
+        localStorage.setItem('category', category);
 
         // Update UI
         document.getElementById('playerName').innerText = playerName;
@@ -747,43 +752,9 @@ if (file_exists("scores.json")) {
         document.getElementById('currentScore').innerText = '₱0';
         document.getElementById('streakValue').innerText = '0 🔥';
 
-        // Load first question
+        // Load first question using selected category and difficulty
         loadQuestion(1, difficulty, category);
     };
-
-    // Dummy function for loading questions (replace with real implementation)
-    function loadQuestion(questionNumber, difficulty, category) {
-        filteredQuestions = getFilteredQuestions(category, difficulty);
-        currentQuestionIndex = questionNumber - 1;
-        if (currentQuestionIndex >= filteredQuestions.length) {
-            // End game if no more questions
-            onGameEnd(
-                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                difficulty,
-                category
-            );
-            return;
-        }
-        const qObj = filteredQuestions[currentQuestionIndex];
-        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
-        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
-        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-        document.getElementById('questionText').innerText = qObj.q;
-
-        // Render options
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        qObj.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = function() { onAnswerSelected(idx); };
-            optionsContainer.appendChild(btn);
-        });
-
-        // Start timer for achievement
-        questionStartTime = Date.now();
-    }
 
     // Achievements logic
     const achievements = {
@@ -906,6 +877,35 @@ if (file_exists("scores.json")) {
     }
     .achievement-bar-item .achievement-title {
         font-size: 15px;
+    }
+    /* Achievements modal styling */
+    .achievement-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        opacity: 0.5;
+        filter: grayscale(1);
+        transition: opacity 0.3s, filter 0.3s;
+    }
+    .achievement-item.unlocked {
+        opacity: 1;
+        filter: none;
+    }
+    .achievement-item .achievement-icon {
+        font-size: 28px;
+        margin-right: 12px;
+    }
+    .achievement-item .achievement-title {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+    .achievement-item .achievement-desc {
+        font-size: 14px;
+        color: #ccc;
+    }
+    </style>
+</body>
+</html>
     }
     /* Achievements modal styling */
     .achievement-item {
