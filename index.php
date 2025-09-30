@@ -566,6 +566,173 @@ if (file_exists("scores.json")) {
         document.getElementById('themeSelect').value = 'classic';
     };
 
+    // Sample questions for each category and difficulty
+    const questions = {
+        general: {
+            easy: [
+                { q: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: 0 },
+                { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 }
+            ],
+            medium: [
+                { q: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Twain"], answer: 0 }
+            ],
+            hard: [
+                { q: "What is the smallest prime number?", options: ["1", "2", "3", "5"], answer: 1 }
+            ]
+        },
+        science: {
+            easy: [
+                { q: "What is H2O commonly known as?", options: ["Oxygen", "Hydrogen", "Water", "Salt"], answer: 2 }
+            ],
+            medium: [
+                { q: "What planet is closest to the sun?", options: ["Venus", "Mercury", "Mars", "Earth"], answer: 1 }
+            ],
+            hard: [
+                { q: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Gd", "Go"], answer: 0 }
+            ]
+        },
+        history: {
+            easy: [
+                { q: "Who was the first President of the USA?", options: ["Lincoln", "Washington", "Jefferson", "Adams"], answer: 1 }
+            ],
+            medium: [
+                { q: "In which year did WWII end?", options: ["1945", "1939", "1918", "1965"], answer: 0 }
+            ],
+            hard: [
+                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 }
+            ]
+        },
+        sports: {
+            easy: [
+                { q: "How many players in a soccer team?", options: ["9", "10", "11", "12"], answer: 2 }
+            ],
+            medium: [
+                { q: "Which country won the FIFA World Cup in 2018?", options: ["Brazil", "France", "Germany", "Argentina"], answer: 1 }
+            ],
+            hard: [
+                { q: "What is the maximum score in a single frame of bowling?", options: ["30", "20", "10", "40"], answer: 0 }
+            ]
+        },
+        anime: {
+            easy: [
+                { q: "Who is the main character in Naruto?", options: ["Sasuke", "Naruto", "Sakura", "Kakashi"], answer: 1 }
+            ],
+            medium: [
+                { q: "What is the name of the pirate crew in One Piece?", options: ["Straw Hat", "Blackbeard", "Red Hair", "Heart"], answer: 0 }
+            ],
+            hard: [
+                { q: "Who created Dragon Ball?", options: ["Akira Toriyama", "Eiichiro Oda", "Masashi Kishimoto", "Yoshihiro Togashi"], answer: 0 }
+            ]
+        }
+    };
+
+    // Ensure all categories exist
+    function ensureCategoryQuestions(category, difficulty) {
+        if (!questions[category]) {
+            questions[category] = {};
+        }
+        if (!questions[category][difficulty]) {
+            // Add a default question if missing
+            questions[category][difficulty] = [
+                { q: `Default question for ${category} (${difficulty})`, options: ["A", "B", "C", "D"], answer: 0 }
+            ];
+        }
+    }
+
+    // Filter questions by category and difficulty
+    function getFilteredQuestions(category, difficulty) {
+        ensureCategoryQuestions(category, difficulty);
+        return questions[category][difficulty];
+    }
+
+    // Track current question index and filtered questions
+    let filteredQuestions = [];
+    let currentQuestionIndex = 0;
+
+    // Load question and display it
+    function loadQuestion(questionNumber, difficulty, category) {
+        filteredQuestions = getFilteredQuestions(category, difficulty);
+        currentQuestionIndex = questionNumber - 1;
+        if (currentQuestionIndex >= filteredQuestions.length) {
+            // End game if no more questions
+            onGameEnd(
+                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                difficulty,
+                category
+            );
+            return;
+        }
+        const qObj = filteredQuestions[currentQuestionIndex];
+        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
+        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
+        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+        document.getElementById('questionText').innerText = qObj.q;
+
+        // Render options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        qObj.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = function() { onAnswerSelected(idx); };
+            optionsContainer.appendChild(btn);
+        });
+
+        // Start timer for achievement
+        questionStartTime = Date.now();
+    }
+
+    // Handle answer selection
+    function onAnswerSelected(selectedIdx) {
+        const qObj = filteredQuestions[currentQuestionIndex];
+        const isCorrect = selectedIdx === qObj.answer;
+        const feedbackText = document.getElementById('feedbackText');
+        if (isCorrect) {
+            feedbackText.innerText = "Correct!";
+            // Update score and streak
+            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
+            score += (currentQuestionIndex + 1) * 1000;
+            document.getElementById('currentScore').innerText = '₱' + score;
+            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
+            streak += 1;
+            document.getElementById('streakValue').innerText = streak + " 🔥";
+            // Achievements
+            const answerTime = (Date.now() - questionStartTime) / 1000;
+            if (answerTime < 1) unlockAchievement('under1Sec');
+            if (streak >= 5) unlockAchievement('hotStreak');
+            // Next question
+            setTimeout(() => {
+                feedbackText.innerText = "";
+                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
+            }, 1000);
+        } else {
+            feedbackText.innerText = "Wrong!";
+            // Reset streak
+            document.getElementById('streakValue').innerText = "0 🔥";
+            // End game
+            setTimeout(() => {
+                feedbackText.innerText = "";
+                onGameEnd(
+                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                    localStorage.getItem('difficulty') || 'medium',
+                    localStorage.getItem('category') || 'general'
+                );
+            }, 1000);
+        }
+    }
+
+    // End game logic
+    function onGameEnd(finalScore, difficulty, category) {
+        if (finalScore > 0) unlockAchievement('firstWin');
+        if (finalScore >= 1000000) unlockAchievement('millionaire');
+        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
+        document.getElementById('finalScoreDisplay').innerText = '₱' + finalScore;
+        document.getElementById('finalScore').value = finalScore;
+        document.getElementById('finalDifficulty').value = difficulty;
+        showModal('gameOverModal');
+    }
+
     // Start game button logic
     document.getElementById('startGameBtn').onclick = function() {
         // Get settings
@@ -577,6 +744,8 @@ if (file_exists("scores.json")) {
         document.getElementById('playerName').innerText = playerName;
         document.getElementById('difficultySelect').value = difficulty;
         document.getElementById('categorySelect').value = category;
+        document.getElementById('currentScore').innerText = '₱0';
+        document.getElementById('streakValue').innerText = '0 🔥';
 
         // Load first question
         loadQuestion(1, difficulty, category);
@@ -584,12 +753,36 @@ if (file_exists("scores.json")) {
 
     // Dummy function for loading questions (replace with real implementation)
     function loadQuestion(questionNumber, difficulty, category) {
+        filteredQuestions = getFilteredQuestions(category, difficulty);
+        currentQuestionIndex = questionNumber - 1;
+        if (currentQuestionIndex >= filteredQuestions.length) {
+            // End game if no more questions
+            onGameEnd(
+                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                difficulty,
+                category
+            );
+            return;
+        }
+        const qObj = filteredQuestions[currentQuestionIndex];
         document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
         document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
-        document.getElementById('questionCategory').innerText = 'Category: ' + category;
-        document.getElementById('questionText').innerText = 'This is a ' + difficulty + ' question in ' + category + '.';
+        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+        document.getElementById('questionText').innerText = qObj.q;
 
-        // TODO: Load real question data and options
+        // Render options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        qObj.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = function() { onAnswerSelected(idx); };
+            optionsContainer.appendChild(btn);
+        });
+
+        // Start timer for achievement
+        questionStartTime = Date.now();
     }
 
     // Achievements logic
