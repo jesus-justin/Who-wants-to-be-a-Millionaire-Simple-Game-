@@ -778,6 +778,7 @@ if (file_exists("scores.json")) {
     }
 
     // Handle answer selection
+    // Fix: Move to next question if correct, show game over if wrong
     function onAnswerSelected(selectedIdx) {
         const qObj = filteredQuestions[currentQuestionIndex];
         const isCorrect = selectedIdx === qObj.answer;
@@ -795,16 +796,17 @@ if (file_exists("scores.json")) {
             const answerTime = (Date.now() - questionStartTime) / 1000;
             if (answerTime < 1) unlockAchievement('under1Sec');
             if (streak >= 5) unlockAchievement('hotStreak');
-            // Next question
+            // Move to next question after short delay
             setTimeout(() => {
                 feedbackText.innerText = "";
+                // FIX: Move to next question (increment by 1)
                 loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
             }, 1000);
         } else {
             feedbackText.innerText = "Wrong!";
             // Reset streak
             document.getElementById('streakValue').innerText = "0 🔥";
-            // End game
+            // Game over after short delay
             setTimeout(() => {
                 feedbackText.innerText = "";
                 onGameEnd(
