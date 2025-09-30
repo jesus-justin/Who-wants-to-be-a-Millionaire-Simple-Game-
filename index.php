@@ -943,6 +943,60 @@ if (file_exists("scores.json")) {
         if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
     }
 
+    // Listen for changes to category or difficulty in the settings modal
+    document.getElementById('categorySelect').addEventListener('change', function() {
+        updatePreviewQuestion();
+    });
+    document.getElementById('difficultySelect').addEventListener('change', function() {
+        updatePreviewQuestion();
+    });
+
+    // Preview the first question for the selected category/difficulty in the settings modal (optional UX)
+    function updatePreviewQuestion() {
+        const category = document.getElementById('categorySelect').value;
+        const difficulty = document.getElementById('difficultySelect').value;
+        const previewQuestions = getFilteredQuestions(category, difficulty);
+        if (previewQuestions.length > 0) {
+            document.getElementById('questionText').innerText = previewQuestions[0].q;
+            document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+            document.getElementById('questionNumber').innerText = 'Question 1';
+            document.getElementById('questionPrize').innerText = '₱1,000';
+            // Optionally show options for preview
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            previewQuestions[0].options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn preview';
+                btn.innerText = opt;
+                btn.disabled = true;
+                optionsContainer.appendChild(btn);
+            });
+        }
+    }
+
+    // When starting a new game, always use the selected category/difficulty from the modal
+    document.getElementById('startGameBtn').onclick = function() {
+        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
+        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
+        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
+
+        localStorage.setItem('playerName', playerName);
+        localStorage.setItem('difficulty', difficulty);
+        localStorage.setItem('category', category);
+
+        document.getElementById('playerName').innerText = playerName;
+        document.getElementById('difficultySelect').value = difficulty;
+        document.getElementById('categorySelect').value = category;
+        document.getElementById('currentScore').innerText = '₱0';
+        document.getElementById('streakValue').innerText = '0 🔥';
+
+        // Load first question using selected category and difficulty
+        loadQuestion(1, difficulty, category);
+    };
+
+    // The loadQuestion function already displays only questions for the selected category/difficulty
+    // It uses getFilteredQuestions(category, difficulty) which is correct
+
     </script>
     <style>
     /* Achievement bar styling */
