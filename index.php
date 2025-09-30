@@ -568,60 +568,154 @@ if (file_exists("scores.json")) {
 
     // Sample questions for each category and difficulty
     const questions = {
+        // -------------------- GENERAL KNOWLEDGE --------------------
         general: {
+            // Easy
             easy: [
+                // General Knowledge - Easy
                 { q: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: 0 },
-                { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 }
+                { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 },
+                { q: "What color do you get when you mix red and white?", options: ["Pink", "Purple", "Orange", "Brown"], answer: 0 },
+                { q: "How many continents are there?", options: ["5", "6", "7", "8"], answer: 2 },
+                { q: "Which animal is known as man's best friend?", options: ["Cat", "Dog", "Horse", "Rabbit"], answer: 1 }
             ],
+            // Medium
             medium: [
-                { q: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Twain"], answer: 0 }
+                // General Knowledge - Medium
+                { q: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Twain"], answer: 0 },
+                { q: "What is the largest ocean on Earth?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: 2 },
+                { q: "Which country invented pizza?", options: ["France", "Italy", "USA", "Greece"], answer: 1 },
+                { q: "What is the boiling point of water in Celsius?", options: ["90", "100", "110", "120"], answer: 1 },
+                { q: "What is the main ingredient in guacamole?", options: ["Tomato", "Avocado", "Potato", "Carrot"], answer: 1 }
             ],
+            // Hard
             hard: [
-                { q: "What is the smallest prime number?", options: ["1", "2", "3", "5"], answer: 1 }
+                // General Knowledge - Hard
+                { q: "What is the smallest prime number?", options: ["1", "2", "3", "5"], answer: 1 },
+                { q: "Which element has the chemical symbol 'Fe'?", options: ["Gold", "Iron", "Silver", "Lead"], answer: 1 },
+                { q: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], answer: 2 },
+                { q: "What is the capital of Mongolia?", options: ["Astana", "Ulaanbaatar", "Tashkent", "Bishkek"], answer: 1 },
+                { q: "Which planet has the most moons?", options: ["Earth", "Jupiter", "Saturn", "Mars"], answer: 2 }
             ]
         },
+        // -------------------- SCIENCE --------------------
         science: {
+            // Easy
             easy: [
-                { q: "What is H2O commonly known as?", options: ["Oxygen", "Hydrogen", "Water", "Salt"], answer: 2 }
+                // Science - Easy
+                { q: "What is H2O commonly known as?", options: ["Oxygen", "Hydrogen", "Water", "Salt"], answer: 2 },
+                { q: "What do bees collect from flowers?", options: ["Honey", "Nectar", "Pollen", "Seeds"], answer: 2 },
+                { q: "What is the freezing point of water?", options: ["0°C", "10°C", "32°C", "100°C"], answer: 0 },
+                { q: "Which organ pumps blood?", options: ["Liver", "Heart", "Lung", "Kidney"], answer: 1 },
+                { q: "What gas do plants breathe in?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], answer: 1 }
             ],
+            // Medium
             medium: [
-                { q: "What planet is closest to the sun?", options: ["Venus", "Mercury", "Mars", "Earth"], answer: 1 }
+                // Science - Medium
+                { q: "What planet is closest to the sun?", options: ["Venus", "Mercury", "Mars", "Earth"], answer: 1 },
+                { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"], answer: 1 },
+                { q: "What is the process by which plants make food?", options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"], answer: 1 },
+                { q: "Which vitamin is produced when sunlight hits the skin?", options: ["A", "B", "C", "D"], answer: 3 },
+                { q: "What is the hardest natural substance?", options: ["Gold", "Iron", "Diamond", "Quartz"], answer: 2 }
             ],
+            // Hard
             hard: [
-                { q: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Gd", "Go"], answer: 0 }
+                // Science - Hard
+                { q: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Gd", "Go"], answer: 0 },
+                { q: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "1,000 km/s", "30,000 km/s"], answer: 0 },
+                { q: "Who developed the theory of relativity?", options: ["Newton", "Einstein", "Tesla", "Curie"], answer: 1 },
+                { q: "What is the powerhouse of the cell?", options: ["Nucleus", "Mitochondria", "Ribosome", "Chloroplast"], answer: 1 },
+                { q: "What is the main gas in Earth's atmosphere?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], answer: 1 }
             ]
         },
+        // -------------------- HISTORY --------------------
         history: {
+            // Easy
             easy: [
-                { q: "Who was the first President of the USA?", options: ["Lincoln", "Washington", "Jefferson", "Adams"], answer: 1 }
+                // History - Easy
+                { q: "Who was the first President of the USA?", options: ["Lincoln", "Washington", "Jefferson", "Adams"], answer: 1 },
+                { q: "What year did World War II end?", options: ["1945", "1939", "1918", "1965"], answer: 0 },
+                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 },
+                { q: "Which ancient civilization built the pyramids?", options: ["Romans", "Egyptians", "Greeks", "Mayans"], answer: 1 },
+                { q: "Who was known as the Maid of Orléans?", options: ["Cleopatra", "Joan of Arc", "Elizabeth I", "Marie Curie"], answer: 1 }
             ],
+            // Medium
             medium: [
-                { q: "In which year did WWII end?", options: ["1945", "1939", "1918", "1965"], answer: 0 }
+                // History - Medium
+                { q: "In which year did WWII end?", options: ["1945", "1939", "1918", "1965"], answer: 0 },
+                { q: "Who was the British Prime Minister during WWII?", options: ["Churchill", "Thatcher", "Blair", "Cameron"], answer: 0 },
+                { q: "Which empire was ruled by Julius Caesar?", options: ["Greek", "Roman", "Ottoman", "Persian"], answer: 1 },
+                { q: "Who was the first man on the moon?", options: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"], answer: 1 },
+                { q: "Where did the Renaissance begin?", options: ["France", "Italy", "Germany", "Spain"], answer: 1 }
             ],
+            // Hard
             hard: [
-                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 }
+                // History - Hard
+                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 },
+                { q: "Who was the longest reigning British monarch?", options: ["Victoria", "Elizabeth II", "George III", "Henry VIII"], answer: 1 },
+                { q: "Which treaty ended WWI?", options: ["Versailles", "Tordesillas", "Paris", "Vienna"], answer: 0 },
+                { q: "Who was the first emperor of China?", options: ["Qin Shi Huang", "Kublai Khan", "Sun Tzu", "Confucius"], answer: 0 },
+                { q: "What year did the Berlin Wall fall?", options: ["1989", "1991", "1980", "1975"], answer: 0 }
             ]
         },
+        // -------------------- SPORTS --------------------
         sports: {
+            // Easy
             easy: [
-                { q: "How many players in a soccer team?", options: ["9", "10", "11", "12"], answer: 2 }
+                // Sports - Easy
+                { q: "How many players in a soccer team?", options: ["9", "10", "11", "12"], answer: 2 },
+                { q: "What sport uses a puck?", options: ["Football", "Basketball", "Hockey", "Tennis"], answer: 2 },
+                { q: "Which sport is Serena Williams famous for?", options: ["Golf", "Tennis", "Soccer", "Swimming"], answer: 1 },
+                { q: "How many bases in baseball?", options: ["2", "3", "4", "5"], answer: 2 },
+                { q: "What color is the center of a target in archery?", options: ["Red", "Blue", "Yellow", "Green"], answer: 2 }
             ],
+            // Medium
             medium: [
-                { q: "Which country won the FIFA World Cup in 2018?", options: ["Brazil", "France", "Germany", "Argentina"], answer: 1 }
+                // Sports - Medium
+                { q: "Which country won the FIFA World Cup in 2018?", options: ["Brazil", "France", "Germany", "Argentina"], answer: 1 },
+                { q: "How many rings are on the Olympic flag?", options: ["3", "4", "5", "6"], answer: 2 },
+                { q: "What is the national sport of Japan?", options: ["Karate", "Sumo", "Judo", "Baseball"], answer: 1 },
+                { q: "Which sport is known as the 'king of sports'?", options: ["Basketball", "Soccer", "Tennis", "Cricket"], answer: 1 },
+                { q: "Who holds the record for most Olympic gold medals?", options: ["Usain Bolt", "Michael Phelps", "Simone Biles", "Carl Lewis"], answer: 1 }
             ],
+            // Hard
             hard: [
-                { q: "What is the maximum score in a single frame of bowling?", options: ["30", "20", "10", "40"], answer: 0 }
+                // Sports - Hard
+                { q: "What is the maximum score in a single frame of bowling?", options: ["30", "20", "10", "40"], answer: 0 },
+                { q: "Which country hosted the first modern Olympics?", options: ["France", "USA", "Greece", "Italy"], answer: 2 },
+                { q: "How many players are on a rugby union team?", options: ["11", "13", "15", "18"], answer: 2 },
+                { q: "Who won the NBA MVP in 2021?", options: ["LeBron James", "Nikola Jokic", "Stephen Curry", "Giannis Antetokounmpo"], answer: 1 },
+                { q: "Which tennis tournament is played on clay?", options: ["Wimbledon", "US Open", "French Open", "Australian Open"], answer: 2 }
             ]
         },
+        // -------------------- ANIME --------------------
         anime: {
+            // Easy
             easy: [
-                { q: "Who is the main character in Naruto?", options: ["Sasuke", "Naruto", "Sakura", "Kakashi"], answer: 1 }
+                // Anime - Easy
+                { q: "Who is the main character in Naruto?", options: ["Sasuke", "Naruto", "Sakura", "Kakashi"], answer: 1 },
+                { q: "What is Pikachu's type?", options: ["Fire", "Water", "Electric", "Grass"], answer: 2 },
+                { q: "Which anime features a notebook that kills?", options: ["Death Note", "Bleach", "Naruto", "One Piece"], answer: 0 },
+                { q: "Who is the captain of the Straw Hat Pirates?", options: ["Zoro", "Luffy", "Sanji", "Nami"], answer: 1 },
+                { q: "What is the name of Goku's son?", options: ["Vegeta", "Gohan", "Trunks", "Krillin"], answer: 1 }
             ],
+            // Medium
             medium: [
-                { q: "What is the name of the pirate crew in One Piece?", options: ["Straw Hat", "Blackbeard", "Red Hair", "Heart"], answer: 0 }
+                // Anime - Medium
+                { q: "What is the name of the pirate crew in One Piece?", options: ["Straw Hat", "Blackbeard", "Red Hair", "Heart"], answer: 0 },
+                { q: "Who is the main antagonist in Death Note?", options: ["L", "Light", "Ryuk", "Misa"], answer: 1 },
+                { q: "Which anime features Titans attacking humanity?", options: ["Attack on Titan", "Bleach", "Naruto", "Fairy Tail"], answer: 0 },
+                { q: "Who is the creator of My Hero Academia?", options: ["Horikoshi", "Oda", "Toriyama", "Kishimoto"], answer: 0 },
+                { q: "What is the name of the ninja village in Naruto?", options: ["Sand", "Leaf", "Mist", "Cloud"], answer: 1 }
             ],
+            // Hard
             hard: [
-                { q: "Who created Dragon Ball?", options: ["Akira Toriyama", "Eiichiro Oda", "Masashi Kishimoto", "Yoshihiro Togashi"], answer: 0 }
+                // Anime - Hard
+                { q: "Who created Dragon Ball?", options: ["Akira Toriyama", "Eiichiro Oda", "Masashi Kishimoto", "Yoshihiro Togashi"], answer: 0 },
+                { q: "What is the real name of 'L' in Death Note?", options: ["Light Yagami", "L Lawliet", "Ryuk", "Near"], answer: 1 },
+                { q: "Which anime is set in Neo-Tokyo?", options: ["Akira", "Naruto", "Bleach", "One Piece"], answer: 0 },
+                { q: "Who is the main character in Code Geass?", options: ["Suzaku", "Lelouch", "C.C.", "Kallen"], answer: 1 },
+                { q: "What is the name of the alchemist brothers in Fullmetal Alchemist?", options: ["Elric", "Rockbell", "Armstrong", "Bradley"], answer: 0 }
             ]
         }
     };
@@ -877,35 +971,6 @@ if (file_exists("scores.json")) {
     }
     .achievement-bar-item .achievement-title {
         font-size: 15px;
-    }
-    /* Achievements modal styling */
-    .achievement-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-        opacity: 0.5;
-        filter: grayscale(1);
-        transition: opacity 0.3s, filter 0.3s;
-    }
-    .achievement-item.unlocked {
-        opacity: 1;
-        filter: none;
-    }
-    .achievement-item .achievement-icon {
-        font-size: 28px;
-        margin-right: 12px;
-    }
-    .achievement-item .achievement-title {
-        font-size: 18px;
-        margin-right: 8px;
-    }
-    .achievement-item .achievement-desc {
-        font-size: 14px;
-        color: #ccc;
-    }
-    </style>
-</body>
-</html>
     }
     /* Achievements modal styling */
     .achievement-item {
