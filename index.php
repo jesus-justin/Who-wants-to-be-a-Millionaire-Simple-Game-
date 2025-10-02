@@ -785,28 +785,23 @@ if (file_exists("scores.json")) {
         const feedbackText = document.getElementById('feedbackText');
         if (isCorrect) {
             feedbackText.innerText = "Correct!";
-            // Update score and streak
             let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
             score += (currentQuestionIndex + 1) * 1000;
             document.getElementById('currentScore').innerText = '₱' + score;
             let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
             streak += 1;
             document.getElementById('streakValue').innerText = streak + " 🔥";
-            // Achievements
             const answerTime = (Date.now() - questionStartTime) / 1000;
             if (answerTime < 1) unlockAchievement('under1Sec');
             if (streak >= 5) unlockAchievement('hotStreak');
-            // Move to next question after short delay
+            // Move to next question (increment by 1)
             setTimeout(() => {
                 feedbackText.innerText = "";
-                // FIX: Move to next question (increment by 1)
                 loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
             }, 1000);
         } else {
             feedbackText.innerText = "Wrong!";
-            // Reset streak
             document.getElementById('streakValue').innerText = "0 🔥";
-            // Game over after short delay
             setTimeout(() => {
                 feedbackText.innerText = "";
                 onGameEnd(
@@ -996,8 +991,60 @@ if (file_exists("scores.json")) {
         loadQuestion(1, difficulty, category);
     };
 
-    // The loadQuestion function already displays only questions for the selected category/difficulty
-    // It uses getFilteredQuestions(category, difficulty) which is correct
+    // 1. Fix question navigation logic in onAnswerSelected
+    function onAnswerSelected(selectedIdx) {
+        const qObj = filteredQuestions[currentQuestionIndex];
+        const isCorrect = selectedIdx === qObj.answer;
+        const feedbackText = document.getElementById('feedbackText');
+        if (isCorrect) {
+            feedbackText.innerText = "Correct!";
+            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
+            score += (currentQuestionIndex + 1) * 1000;
+            document.getElementById('currentScore').innerText = '₱' + score;
+            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
+            streak += 1;
+            document.getElementById('streakValue').innerText = streak + " 🔥";
+            const answerTime = (Date.now() - questionStartTime) / 1000;
+            if (answerTime < 1) unlockAchievement('under1Sec');
+            if (streak >= 5) unlockAchievement('hotStreak');
+            // Move to next question (increment by 1)
+            setTimeout(() => {
+                feedbackText.innerText = "";
+                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
+            }, 1000);
+        } else {
+            feedbackText.innerText = "Wrong!";
+            document.getElementById('streakValue').innerText = "0 🔥";
+            setTimeout(() => {
+                feedbackText.innerText = "";
+                onGameEnd(
+                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                    localStorage.getItem('difficulty') || 'medium',
+                    localStorage.getItem('category') || 'general'
+                );
+            }, 1000);
+        }
+    }
+
+    // 2. Add basic prize ladder population logic (optional, for completeness)
+    function populatePrizeLadder() {
+        const ladder = document.getElementById('prizeLadder');
+        ladder.innerHTML = '';
+        for (let i = 1; i <= 15; i++) {
+            const div = document.createElement('div');
+            div.className = 'ladder-level';
+            div.innerText = `Q${i}: ₱${(i * 1000).toLocaleString()}`;
+            ladder.appendChild(div);
+        }
+    }
+    populatePrizeLadder();
+
+    // 3. Lifeline buttons exist but do nothing. Add disabled logic for now.
+    document.querySelectorAll('.lifeline-btn').forEach(btn => {
+        btn.onclick = function() {
+            alert('Lifeline feature not implemented yet.');
+        };
+    });
 
     </script>
     <style>
