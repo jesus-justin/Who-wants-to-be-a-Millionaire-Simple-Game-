@@ -773,6 +773,9 @@ if (file_exists("scores.json")) {
             optionsContainer.appendChild(btn);
         });
 
+        // Highlight current prize ladder
+        populatePrizeLadder(questionNumber);
+
         // Start timer for achievement
         questionStartTime = Date.now();
     }
@@ -991,7 +994,7 @@ if (file_exists("scores.json")) {
         loadQuestion(1, difficulty, category);
     };
 
-    // 1. Fix question navigation logic in onAnswerSelected
+    // 1. Fix question navigation logic (no duplicate function definition)
     function onAnswerSelected(selectedIdx) {
         const qObj = filteredQuestions[currentQuestionIndex];
         const isCorrect = selectedIdx === qObj.answer;
@@ -1026,25 +1029,110 @@ if (file_exists("scores.json")) {
         }
     }
 
-    // 2. Add basic prize ladder population logic (optional, for completeness)
-    function populatePrizeLadder() {
+    // 2. Prize ladder population (enhanced: highlight current question)
+    function populatePrizeLadder(currentQ) {
         const ladder = document.getElementById('prizeLadder');
         ladder.innerHTML = '';
         for (let i = 1; i <= 15; i++) {
             const div = document.createElement('div');
             div.className = 'ladder-level';
             div.innerText = `Q${i}: ₱${(i * 1000).toLocaleString()}`;
+            if (i === currentQ) {
+                div.classList.add('active-ladder');
+            }
             ladder.appendChild(div);
         }
     }
-    populatePrizeLadder();
+    // Call on question load
+    function loadQuestion(questionNumber, difficulty, category) {
+        filteredQuestions = getFilteredQuestions(category, difficulty);
+        currentQuestionIndex = questionNumber - 1;
+        if (currentQuestionIndex >= filteredQuestions.length) {
+            onGameEnd(
+                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                difficulty,
+                category
+            );
+            return;
+        }
+        const qObj = filteredQuestions[currentQuestionIndex];
+        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
+        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
+        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+        document.getElementById('questionText').innerText = qObj.q;
 
-    // 3. Lifeline buttons exist but do nothing. Add disabled logic for now.
+        // Render options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        qObj.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = function() { onAnswerSelected(idx); };
+            optionsContainer.appendChild(btn);
+        });
+
+        // Highlight current prize ladder
+        populatePrizeLadder(questionNumber);
+
+        // Start timer for achievement
+        questionStartTime = Date.now();
+    }
+
+    // 3. Lifeline buttons: visually disable after use (simple enhancement)
     document.querySelectorAll('.lifeline-btn').forEach(btn => {
         btn.onclick = function() {
+            if (btn.classList.contains('used-lifeline')) return;
+            btn.classList.add('used-lifeline');
+            btn.disabled = true;
             alert('Lifeline feature not implemented yet.');
         };
     });
+
+    // 4. UI/UX enhancements (add transitions, hover effects, better ladder highlight)
+    const style = document.createElement('style');
+    style.innerHTML = `
+.ladder-level {
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    background: #222;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+}
+.ladder-level.active-ladder {
+    background: #ffd700;
+    color: #222;
+    font-weight: bold;
+    box-shadow: 0 0 8px #ffd700;
+}
+.option-btn {
+    transition: background 0.2s, color 0.2s;
+}
+.option-btn:hover:not(:disabled) {
+    background: #ffd700;
+    color: #222;
+}
+.lifeline-btn.used-lifeline {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.lifeline-btn {
+    transition: opacity 0.2s;
+}
+`;
+document.head.appendChild(style);
+
+// 5. Accessibility: focus first option on question load
+function focusFirstOption() {
+    const btn = document.querySelector('.option-btn');
+    if (btn) btn.focus();
+}
+const origLoadQuestion = loadQuestion;
+loadQuestion = function(questionNumber, difficulty, category) {
+    origLoadQuestion(questionNumber, difficulty, category);
+    focusFirstOption();
+};
 
     </script>
     <style>
