@@ -22,6 +22,15 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     transition: all 0.3s ease;
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+}
+
+/* Animated gradient background */
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
 }
 
 /* Header Styles */
@@ -151,6 +160,8 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--gold-color);
+    text-shadow: 0 0 8px var(--gold-color), 0 0 2px #fff;
+    animation: glow 2s infinite alternate;
 }
 
 .streak-display {
@@ -222,6 +233,7 @@ body {
     gap: 0.8rem;
     font-weight: 600;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: floatLifeline 3s ease-in-out infinite;
 }
 
 .lifeline-btn:hover {
@@ -265,6 +277,11 @@ body {
     border-left-color: #ff6b6b;
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    border: 2px solid var(--gold-color);
+    box-shadow: 0 0 16px var(--gold-color), 0 0 4px #fff;
+    background: linear-gradient(90deg, var(--gold-color) 60%, #fff 100%);
+    color: #222;
+    font-weight: bold;
 }
 
 .ladder-item.passed {
@@ -324,6 +341,8 @@ body {
 .question-prize {
     color: #00ff00;
     font-size: 1.3rem;
+    text-shadow: 0 0 8px var(--gold-color), 0 0 2px #fff;
+    animation: glow 2s infinite alternate;
 }
 
 .question-category {
@@ -410,6 +429,18 @@ body {
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    animation: slideIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.feedback-text.success {
+    background: rgba(0,255,0,0.15);
+    color: #00ff00;
+    animation: correctAnswer 0.8s;
+}
+.feedback-text.error {
+    background: rgba(255,0,0,0.15);
+    color: #ff0000;
+    animation: incorrectAnswer 0.8s;
 }
 
 /* Game Controls */
@@ -433,11 +464,17 @@ body {
     align-items: center;
     gap: 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: bounceBtn 2s infinite;
 }
 
 .control-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes bounceBtn {
+    0%, 100% {transform: translateY(0);}
+    50% {transform: translateY(-6px);}
 }
 
 /* Modal Styles */
@@ -469,7 +506,7 @@ body {
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    animation: slideIn 0.3s ease;
+    animation: slideIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
 }
 
 .modal-header {
@@ -723,6 +760,139 @@ body {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
 }
+
+/* --- ENHANCEMENTS & FIXES --- */
+
+/* Add subtle background animation for body */
+body {
+    /* ...existing code... */
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+}
+
+/* Animated gradient background */
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* Add glow effect to important elements */
+.score-value, .question-prize, .ladder-level.active-ladder, .ladder-item.current {
+    text-shadow: 0 0 8px var(--gold-color), 0 0 2px #fff;
+    animation: glow 2s infinite alternate;
+}
+
+/* Improve button focus/hover for accessibility */
+.option-btn:focus, .lifeline-btn:focus, .control-btn:focus, .btn:focus {
+    outline: 2px solid var(--gold-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px var(--gold-color);
+}
+
+/* Animate feedback text for correct/wrong answers */
+.feedback-text.success {
+    background: rgba(0,255,0,0.15);
+    color: #00ff00;
+    animation: correctAnswer 0.8s;
+}
+.feedback-text.error {
+    background: rgba(255,0,0,0.15);
+    color: #ff0000;
+    animation: incorrectAnswer 0.8s;
+}
+
+/* Add a subtle bounce to the start button */
+.control-btn {
+    /* ...existing code... */
+    animation: bounceBtn 2s infinite;
+}
+@keyframes bounceBtn {
+    0%, 100% {transform: translateY(0);}
+    50% {transform: translateY(-6px);}
+}
+
+/* Animate modal appearance */
+.modal-content {
+    /* ...existing code... */
+    animation: slideIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+/* Add a floating effect to lifeline buttons */
+.lifeline-btn {
+    /* ...existing code... */
+    animation: floatLifeline 3s ease-in-out infinite;
+}
+@keyframes floatLifeline {
+    0%, 100% {transform: translateY(0);}
+    50% {transform: translateY(-4px);}
+}
+
+/* Enhance prize ladder highlight */
+.ladder-level.active-ladder, .ladder-item.current {
+    border: 2px solid var(--gold-color);
+    box-shadow: 0 0 16px var(--gold-color), 0 0 4px #fff;
+    background: linear-gradient(90deg, var(--gold-color) 60%, #fff 100%);
+    color: #222;
+    font-weight: bold;
+}
+
+/* Add transition to sidebar and game-container for smoother appearance */
+.sidebar, .game-container {
+    transition: box-shadow 0.3s, border 0.3s, background 0.3s;
+}
+
+/* Notification popups: more visible and animated */
+.notification {
+    /* ...existing code... */
+    animation: slideInRight 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+    font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid var(--gold-color);
+}
+
+/* Responsive: make sidebar collapsible on mobile */
+@media (max-width: 600px) {
+    .sidebar {
+        position: fixed;
+        left: -100vw;
+        top: 0;
+        height: 100vh;
+        z-index: 3000;
+        transition: left 0.4s;
+    }
+    .sidebar.open {
+        left: 0;
+    }
+    .dashboard {
+        flex-direction: column;
+    }
+}
+
+/* Add a floating button for sidebar toggle on mobile */
+.sidebar-toggle-btn {
+    display: none;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    z-index: 4000;
+    background: var(--gold-color);
+    color: #222;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border: none;
+    cursor: pointer;
+}
+@media (max-width: 600px) {
+    .sidebar-toggle-btn {
+        display: block;
+    }
+}
+
+/* --- END ENHANCEMENTS --- */
 
 /* Responsive Design */
 @media (max-width: 1024px) {

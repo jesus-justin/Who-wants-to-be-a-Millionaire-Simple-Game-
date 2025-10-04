@@ -924,6 +924,17 @@ function loadQuestion() {
     startTimer();
 }
 
+// Accessibility: focus first option on question load
+function focusFirstOption() {
+    const btn = elements.optionsContainer.querySelector('.option-btn');
+    if (btn) btn.focus();
+}
+const origLoadQuestion = loadQuestion;
+loadQuestion = function() {
+    origLoadQuestion();
+    focusFirstOption();
+};
+
 // Select Answer
 function selectAnswer(selected) {
     if (!gameState.gameActive) return;
@@ -1308,6 +1319,8 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
+    notification.setAttribute('role', 'alert');
+    notification.setAttribute('aria-live', 'assertive');
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -1320,22 +1333,27 @@ function showNotification(message, type = 'info') {
         font-weight: 600;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         animation: slideInRight 0.3s ease;
+        font-size: 1.1rem;
     `;
-    
     document.body.appendChild(notification);
-    
     setTimeout(() => {
         notification.remove();
-    }, 3000);
+    }, 3500);
 }
 
-// Sound System
+// Sound: fix for mobile browsers (resume context if suspended)
 function playSound(soundType) {
     if (!gameState.settings.sound) return;
-    
+    let audioContext;
+    try {
+        audioContext = window._millionaireAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        window._millionaireAudioCtx = audioContext;
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    } catch (e) { return; }
+
     // Create audio context for sound effects
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
     const sounds = {
         correct: { frequency: 800, duration: 0.3 },
         incorrect: { frequency: 200, duration: 0.5 },

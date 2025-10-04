@@ -446,6 +446,11 @@ if (file_exists("scores.json")) {
         </div>
     </div>
 
+    <!-- Add sidebar toggle button for mobile -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <script src="questions.js"></script>
     <script>
     // Utility to show/hide modals
@@ -498,296 +503,38 @@ if (file_exists("scores.json")) {
         hideModal('randomEventModal');
     };
 
-    // Modal close on overlay click and ESC key
-    document.querySelectorAll('.modal').forEach(function(modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
+    // Sidebar toggle for mobile
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    sidebarToggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking outside (mobile)
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 600 && sidebar.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && e.target !== sidebarToggleBtn) {
+                sidebar.classList.remove('open');
             }
-        });
-    });
-    document.addEventListener('keydown', function(e) {
-        if (e.key === "Escape") {
-            document.querySelectorAll('.modal').forEach(function(modal) {
-                modal.style.display = 'none';
-            });
-            document.body.classList.remove('modal-open');
         }
     });
 
-    // Difficulty tab logic
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const difficulty = this.getAttribute('data-difficulty');
-            tabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            document.querySelectorAll('.leaderboard-section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById(difficulty + 'Leaderboard').style.display = 'block';
-        });
-    });
-
-    // Save settings logic
-    document.getElementById('saveSettings').onclick = function() {
-        const playerName = document.getElementById('playerNameInput').value;
-        const difficulty = document.getElementById('difficultySelect').value;
-        const category = document.getElementById('categorySelect').value;
-        const soundEnabled = document.getElementById('soundToggle').checked;
-        const musicEnabled = document.getElementById('musicToggle').checked;
-        const theme = document.getElementById('themeSelect').value;
-
-        // Save to localStorage (or send to server)
-        localStorage.setItem('playerName', playerName);
-        localStorage.setItem('difficulty', difficulty);
-        localStorage.setItem('category', category);
-        localStorage.setItem('soundEnabled', soundEnabled);
-        localStorage.setItem('musicEnabled', musicEnabled);
-        localStorage.setItem('theme', theme);
-
-        // Close modal
-        document.getElementById('settingsModal').style.display = 'none';
-
-        // Update UI immediately
-        document.getElementById('playerName').innerText = playerName;
-        // Difficulty and category will be applied when starting a new game
-    };
-
-    // Reset settings logic
-    document.getElementById('resetSettings').onclick = function() {
-        // Reset to default values
-        document.getElementById('playerNameInput').value = '';
-        document.getElementById('difficultySelect').value = 'medium';
-        document.getElementById('categorySelect').value = 'general';
-        document.getElementById('soundToggle').checked = true;
-        document.getElementById('musicToggle').checked = true;
-        document.getElementById('themeSelect').value = 'classic';
-    };
-
-    // Sample questions for each category and difficulty
-    const questions = {
-        // -------------------- GENERAL KNOWLEDGE --------------------
-        general: {
-            // Easy
-            easy: [
-                // General Knowledge - Easy
-                { q: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: 0 },
-                { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 },
-                { q: "What color do you get when you mix red and white?", options: ["Pink", "Purple", "Orange", "Brown"], answer: 0 },
-                { q: "How many continents are there?", options: ["5", "6", "7", "8"], answer: 2 },
-                { q: "Which animal is known as man's best friend?", options: ["Cat", "Dog", "Horse", "Rabbit"], answer: 1 }
-            ],
-            // Medium
-            medium: [
-                // General Knowledge - Medium
-                { q: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Twain"], answer: 0 },
-                { q: "What is the largest ocean on Earth?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: 2 },
-                { q: "Which country invented pizza?", options: ["France", "Italy", "USA", "Greece"], answer: 1 },
-                { q: "What is the boiling point of water in Celsius?", options: ["90", "100", "110", "120"], answer: 1 },
-                { q: "What is the main ingredient in guacamole?", options: ["Tomato", "Avocado", "Potato", "Carrot"], answer: 1 }
-            ],
-            // Hard
-            hard: [
-                // General Knowledge - Hard
-                { q: "What is the smallest prime number?", options: ["1", "2", "3", "5"], answer: 1 },
-                { q: "Which element has the chemical symbol 'Fe'?", options: ["Gold", "Iron", "Silver", "Lead"], answer: 1 },
-                { q: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], answer: 2 },
-                { q: "What is the capital of Mongolia?", options: ["Astana", "Ulaanbaatar", "Tashkent", "Bishkek"], answer: 1 },
-                { q: "Which planet has the most moons?", options: ["Earth", "Jupiter", "Saturn", "Mars"], answer: 2 }
-            ]
-        },
-        // -------------------- SCIENCE --------------------
-        science: {
-            // Easy
-            easy: [
-                // Science - Easy
-                { q: "What is H2O commonly known as?", options: ["Oxygen", "Hydrogen", "Water", "Salt"], answer: 2 },
-                { q: "What do bees collect from flowers?", options: ["Honey", "Nectar", "Pollen", "Seeds"], answer: 2 },
-                { q: "What is the freezing point of water?", options: ["0°C", "10°C", "32°C", "100°C"], answer: 0 },
-                { q: "Which organ pumps blood?", options: ["Liver", "Heart", "Lung", "Kidney"], answer: 1 },
-                { q: "What gas do plants breathe in?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], answer: 1 }
-            ],
-            // Medium
-            medium: [
-                // Science - Medium
-                { q: "What planet is closest to the sun?", options: ["Venus", "Mercury", "Mars", "Earth"], answer: 1 },
-                { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"], answer: 1 },
-                { q: "What is the process by which plants make food?", options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"], answer: 1 },
-                { q: "Which vitamin is produced when sunlight hits the skin?", options: ["A", "B", "C", "D"], answer: 3 },
-                { q: "What is the hardest natural substance?", options: ["Gold", "Iron", "Diamond", "Quartz"], answer: 2 }
-            ],
-            // Hard
-            hard: [
-                // Science - Hard
-                { q: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Gd", "Go"], answer: 0 },
-                { q: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "1,000 km/s", "30,000 km/s"], answer: 0 },
-                { q: "Who developed the theory of relativity?", options: ["Newton", "Einstein", "Tesla", "Curie"], answer: 1 },
-                { q: "What is the powerhouse of the cell?", options: ["Nucleus", "Mitochondria", "Ribosome", "Chloroplast"], answer: 1 },
-                { q: "What is the main gas in Earth's atmosphere?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], answer: 1 }
-            ]
-        },
-        // -------------------- HISTORY --------------------
-        history: {
-            // Easy
-            easy: [
-                // History - Easy
-                { q: "Who was the first President of the USA?", options: ["Lincoln", "Washington", "Jefferson", "Adams"], answer: 1 },
-                { q: "What year did World War II end?", options: ["1945", "1939", "1918", "1965"], answer: 0 },
-                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 },
-                { q: "Which ancient civilization built the pyramids?", options: ["Romans", "Egyptians", "Greeks", "Mayans"], answer: 1 },
-                { q: "Who was known as the Maid of Orléans?", options: ["Cleopatra", "Joan of Arc", "Elizabeth I", "Marie Curie"], answer: 1 }
-            ],
-            // Medium
-            medium: [
-                // History - Medium
-                { q: "In which year did WWII end?", options: ["1945", "1939", "1918", "1965"], answer: 0 },
-                { q: "Who was the British Prime Minister during WWII?", options: ["Churchill", "Thatcher", "Blair", "Cameron"], answer: 0 },
-                { q: "Which empire was ruled by Julius Caesar?", options: ["Greek", "Roman", "Ottoman", "Persian"], answer: 1 },
-                { q: "Who was the first man on the moon?", options: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"], answer: 1 },
-                { q: "Where did the Renaissance begin?", options: ["France", "Italy", "Germany", "Spain"], answer: 1 }
-            ],
-            // Hard
-            hard: [
-                // History - Hard
-                { q: "Who discovered America?", options: ["Columbus", "Magellan", "Cook", "Vespucci"], answer: 0 },
-                { q: "Who was the longest reigning British monarch?", options: ["Victoria", "Elizabeth II", "George III", "Henry VIII"], answer: 1 },
-                { q: "Which treaty ended WWI?", options: ["Versailles", "Tordesillas", "Paris", "Vienna"], answer: 0 },
-                { q: "Who was the first emperor of China?", options: ["Qin Shi Huang", "Kublai Khan", "Sun Tzu", "Confucius"], answer: 0 },
-                { q: "What year did the Berlin Wall fall?", options: ["1989", "1991", "1980", "1975"], answer: 0 }
-            ]
-        },
-        // -------------------- SPORTS --------------------
-        sports: {
-            // Easy
-            easy: [
-                // Sports - Easy
-                { q: "How many players in a soccer team?", options: ["9", "10", "11", "12"], answer: 2 },
-                { q: "What sport uses a puck?", options: ["Football", "Basketball", "Hockey", "Tennis"], answer: 2 },
-                { q: "Which sport is Serena Williams famous for?", options: ["Golf", "Tennis", "Soccer", "Swimming"], answer: 1 },
-                { q: "How many bases in baseball?", options: ["2", "3", "4", "5"], answer: 2 },
-                { q: "What color is the center of a target in archery?", options: ["Red", "Blue", "Yellow", "Green"], answer: 2 }
-            ],
-            // Medium
-            medium: [
-                // Sports - Medium
-                { q: "Which country won the FIFA World Cup in 2018?", options: ["Brazil", "France", "Germany", "Argentina"], answer: 1 },
-                { q: "How many rings are on the Olympic flag?", options: ["3", "4", "5", "6"], answer: 2 },
-                { q: "What is the national sport of Japan?", options: ["Karate", "Sumo", "Judo", "Baseball"], answer: 1 },
-                { q: "Which sport is known as the 'king of sports'?", options: ["Basketball", "Soccer", "Tennis", "Cricket"], answer: 1 },
-                { q: "Who holds the record for most Olympic gold medals?", options: ["Usain Bolt", "Michael Phelps", "Simone Biles", "Carl Lewis"], answer: 1 }
-            ],
-            // Hard
-            hard: [
-                // Sports - Hard
-                { q: "What is the maximum score in a single frame of bowling?", options: ["30", "20", "10", "40"], answer: 0 },
-                { q: "Which country hosted the first modern Olympics?", options: ["France", "USA", "Greece", "Italy"], answer: 2 },
-                { q: "How many players are on a rugby union team?", options: ["11", "13", "15", "18"], answer: 2 },
-                { q: "Who won the NBA MVP in 2021?", options: ["LeBron James", "Nikola Jokic", "Stephen Curry", "Giannis Antetokounmpo"], answer: 1 },
-                { q: "Which tennis tournament is played on clay?", options: ["Wimbledon", "US Open", "French Open", "Australian Open"], answer: 2 }
-            ]
-        },
-        // -------------------- ANIME --------------------
-        anime: {
-            // Easy
-            easy: [
-                // Anime - Easy
-                { q: "Who is the main character in Naruto?", options: ["Sasuke", "Naruto", "Sakura", "Kakashi"], answer: 1 },
-                { q: "What is Pikachu's type?", options: ["Fire", "Water", "Electric", "Grass"], answer: 2 },
-                { q: "Which anime features a notebook that kills?", options: ["Death Note", "Bleach", "Naruto", "One Piece"], answer: 0 },
-                { q: "Who is the captain of the Straw Hat Pirates?", options: ["Zoro", "Luffy", "Sanji", "Nami"], answer: 1 },
-                { q: "What is the name of Goku's son?", options: ["Vegeta", "Gohan", "Trunks", "Krillin"], answer: 1 }
-            ],
-            // Medium
-            medium: [
-                // Anime - Medium
-                { q: "What is the name of the pirate crew in One Piece?", options: ["Straw Hat", "Blackbeard", "Red Hair", "Heart"], answer: 0 },
-                { q: "Who is the main antagonist in Death Note?", options: ["L", "Light", "Ryuk", "Misa"], answer: 1 },
-                { q: "Which anime features Titans attacking humanity?", options: ["Attack on Titan", "Bleach", "Naruto", "Fairy Tail"], answer: 0 },
-                { q: "Who is the creator of My Hero Academia?", options: ["Horikoshi", "Oda", "Toriyama", "Kishimoto"], answer: 0 },
-                { q: "What is the name of the ninja village in Naruto?", options: ["Sand", "Leaf", "Mist", "Cloud"], answer: 1 }
-            ],
-            // Hard
-            hard: [
-                // Anime - Hard
-                { q: "Who created Dragon Ball?", options: ["Akira Toriyama", "Eiichiro Oda", "Masashi Kishimoto", "Yoshihiro Togashi"], answer: 0 },
-                { q: "What is the real name of 'L' in Death Note?", options: ["Light Yagami", "L Lawliet", "Ryuk", "Near"], answer: 1 },
-                { q: "Which anime is set in Neo-Tokyo?", options: ["Akira", "Naruto", "Bleach", "One Piece"], answer: 0 },
-                { q: "Who is the main character in Code Geass?", options: ["Suzaku", "Lelouch", "C.C.", "Kallen"], answer: 1 },
-                { q: "What is the name of the alchemist brothers in Fullmetal Alchemist?", options: ["Elric", "Rockbell", "Armstrong", "Bradley"], answer: 0 }
-            ]
-        }
-    };
-
-    // Ensure all categories exist
-    function ensureCategoryQuestions(category, difficulty) {
-        if (!questions[category]) {
-            questions[category] = {};
-        }
-        if (!questions[category][difficulty]) {
-            // Add a default question if missing
-            questions[category][difficulty] = [
-                { q: `Default question for ${category} (${difficulty})`, options: ["A", "B", "C", "D"], answer: 0 }
-            ];
-        }
+    // Enhance feedback animation
+    function showFeedback(type, message) {
+        const feedbackText = document.getElementById('feedbackText');
+        feedbackText.textContent = message;
+        feedbackText.className = 'feedback-text ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+        setTimeout(() => {
+            feedbackText.className = 'feedback-text';
+        }, 1500);
     }
 
-    // Filter questions by category and difficulty
-    function getFilteredQuestions(category, difficulty) {
-        ensureCategoryQuestions(category, difficulty);
-        return questions[category][difficulty];
-    }
-
-    // Track current question index and filtered questions
-    let filteredQuestions = [];
-    let currentQuestionIndex = 0;
-
-    // Load question and display it
-    function loadQuestion(questionNumber, difficulty, category) {
-        filteredQuestions = getFilteredQuestions(category, difficulty);
-        currentQuestionIndex = questionNumber - 1;
-        if (currentQuestionIndex >= filteredQuestions.length) {
-            // End game if no more questions
-            onGameEnd(
-                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                difficulty,
-                category
-            );
-            return;
-        }
-        const qObj = filteredQuestions[currentQuestionIndex];
-        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
-        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
-        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-        document.getElementById('questionText').innerText = qObj.q;
-
-        // Render options
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        qObj.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = function() { onAnswerSelected(idx); };
-            optionsContainer.appendChild(btn);
-        });
-
-        // Highlight current prize ladder
-        populatePrizeLadder(questionNumber);
-
-        // Start timer for achievement
-        questionStartTime = Date.now();
-    }
-
-    // Handle answer selection
-    // Fix: Move to next question if correct, show game over if wrong
+    // Replace feedbackText usage in onAnswerSelected
     function onAnswerSelected(selectedIdx) {
         const qObj = filteredQuestions[currentQuestionIndex];
         const isCorrect = selectedIdx === qObj.answer;
-        const feedbackText = document.getElementById('feedbackText');
         if (isCorrect) {
-            feedbackText.innerText = "Correct!";
+            showFeedback('success', "Correct!");
             let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
             score += (currentQuestionIndex + 1) * 1000;
             document.getElementById('currentScore').innerText = '₱' + score;
@@ -799,14 +546,12 @@ if (file_exists("scores.json")) {
             if (streak >= 5) unlockAchievement('hotStreak');
             // Move to next question (increment by 1)
             setTimeout(() => {
-                feedbackText.innerText = "";
                 loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
             }, 1000);
         } else {
-            feedbackText.innerText = "Wrong!";
+            showFeedback('error', "Wrong!");
             document.getElementById('streakValue').innerText = "0 🔥";
             setTimeout(() => {
-                feedbackText.innerText = "";
                 onGameEnd(
                     parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
                     localStorage.getItem('difficulty') || 'medium',
@@ -933,6 +678,261 @@ if (file_exists("scores.json")) {
         const answerTime = (Date.now() - questionStartTime) / 1000;
         if (answerTime < 1) unlockAchievement('under1Sec');
         // Example: unlock hotStreak if streakValue >= 5
+        if (parseInt(document.getElementById('streakValue').innerText) >= 5) unlockAchievement('hotStreak');
+        // ...existing code...
+    }
+    // Example: unlock firstWin and millionaire at game end
+    function onGameEnd(finalScore, difficulty, category) {
+        if (finalScore > 0) unlockAchievement('firstWin');
+        if (finalScore >= 1000000) unlockAchievement('millionaire');
+        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
+    }
+
+    // Listen for changes to category or difficulty in the settings modal
+    document.getElementById('categorySelect').addEventListener('change', function() {
+        updatePreviewQuestion();
+    });
+    document.getElementById('difficultySelect').addEventListener('change', function() {
+        updatePreviewQuestion();
+    });
+
+    // Preview the first question for the selected category/difficulty in the settings modal (optional UX)
+    function updatePreviewQuestion() {
+        const category = document.getElementById('categorySelect').value;
+        const difficulty = document.getElementById('difficultySelect').value;
+        const previewQuestions = getFilteredQuestions(category, difficulty);
+        if (previewQuestions.length > 0) {
+            document.getElementById('questionText').innerText = previewQuestions[0].q;
+            document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+            document.getElementById('questionNumber').innerText = 'Question 1';
+            document.getElementById('questionPrize').innerText = '₱1,000';
+            // Optionally show options for preview
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            previewQuestions[0].options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn preview';
+                btn.innerText = opt;
+                btn.disabled = true;
+                optionsContainer.appendChild(btn);
+            });
+        }
+    }
+
+    // When starting a new game, always use the selected category/difficulty from the modal
+    document.getElementById('startGameBtn').onclick = function() {
+        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
+        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
+        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
+
+        localStorage.setItem('playerName', playerName);
+        localStorage.setItem('difficulty', difficulty);
+        localStorage.setItem('category', category);
+
+        document.getElementById('playerName').innerText = playerName;
+        document.getElementById('difficultySelect').value = difficulty;
+        document.getElementById('categorySelect').value = category;
+        document.getElementById('currentScore').innerText = '₱0';
+        document.getElementById('streakValue').innerText = '0 🔥';
+
+        // Load first question using selected category and difficulty
+        loadQuestion(1, difficulty, category);
+    };
+
+    // 1. Fix question navigation logic (no duplicate function definition)
+    function onAnswerSelected(selectedIdx) {
+        const qObj = filteredQuestions[currentQuestionIndex];
+        const isCorrect = selectedIdx === qObj.answer;
+        if (isCorrect) {
+            showFeedback('success', "Correct!");
+            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
+            score += (currentQuestionIndex + 1) * 1000;
+            document.getElementById('currentScore').innerText = '₱' + score;
+            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
+            streak += 1;
+            document.getElementById('streakValue').innerText = streak + " 🔥";
+            const answerTime = (Date.now() - questionStartTime) / 1000;
+            if (answerTime < 1) unlockAchievement('under1Sec');
+            if (streak >= 5) unlockAchievement('hotStreak');
+            // Move to next question (increment by 1)
+            setTimeout(() => {
+                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
+            }, 1000);
+        } else {
+            showFeedback('error', "Wrong!");
+            document.getElementById('streakValue').innerText = "0 🔥";
+            setTimeout(() => {
+                onGameEnd(
+                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                    localStorage.getItem('difficulty') || 'medium',
+                    localStorage.getItem('category') || 'general'
+                );
+            }, 1000);
+        }
+    }
+
+    // 2. Prize ladder population (enhanced: highlight current question)
+    function populatePrizeLadder(currentQ) {
+        const ladder = document.getElementById('prizeLadder');
+        ladder.innerHTML = '';
+        for (let i = 1; i <= 15; i++) {
+            const div = document.createElement('div');
+            div.className = 'ladder-level';
+            div.innerText = `Q${i}: ₱${(i * 1000).toLocaleString()}`;
+            if (i === currentQ) {
+                div.classList.add('active-ladder');
+            }
+            ladder.appendChild(div);
+        }
+    }
+    // Call on question load
+    function loadQuestion(questionNumber, difficulty, category) {
+        filteredQuestions = getFilteredQuestions(category, difficulty);
+        currentQuestionIndex = questionNumber - 1;
+        if (currentQuestionIndex >= filteredQuestions.length) {
+            onGameEnd(
+                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
+                difficulty,
+                category
+            );
+            return;
+        }
+        const qObj = filteredQuestions[currentQuestionIndex];
+        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
+        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
+        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
+        document.getElementById('questionText').innerText = qObj.q;
+
+        // Render options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        qObj.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = function() { onAnswerSelected(idx); };
+            optionsContainer.appendChild(btn);
+        });
+
+        // Highlight current prize ladder
+        populatePrizeLadder(questionNumber);
+
+        // Start timer for achievement
+        questionStartTime = Date.now();
+    }
+
+    // 3. Lifeline buttons: visually disable after use (simple enhancement)
+    document.querySelectorAll('.lifeline-btn').forEach(btn => {
+        btn.onclick = function() {
+            if (btn.classList.contains('used-lifeline')) return;
+            btn.classList.add('used-lifeline');
+            btn.disabled = true;
+            alert('Lifeline feature not implemented yet.');
+        };
+    });
+
+    // 4. UI/UX enhancements (add transitions, hover effects, better ladder highlight)
+    const style = document.createElement('style');
+    style.innerHTML = `
+.ladder-level {
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    background: #222;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+}
+.ladder-level.active-ladder {
+    background: #ffd700;
+    color: #222;
+    font-weight: bold;
+    box-shadow: 0 0 8px #ffd700;
+}
+.option-btn {
+    transition: background 0.2s, color 0.2s;
+}
+.option-btn:hover:not(:disabled) {
+    background: #ffd700;
+    color: #222;
+}
+.lifeline-btn.used-lifeline {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.lifeline-btn {
+    transition: opacity 0.2s;
+}
+`;
+document.head.appendChild(style);
+
+    // 5. Accessibility: focus first option on question load
+    function focusFirstOption() {
+        const btn = document.querySelector('.option-btn');
+        if (btn) btn.focus();
+    }
+    const origLoadQuestion = loadQuestion;
+    loadQuestion = function(questionNumber, difficulty, category) {
+        origLoadQuestion(questionNumber, difficulty, category);
+        focusFirstOption();
+    };
+
+    </script>
+    <style>
+    /* Achievement bar styling */
+    .achievement-bar {
+        margin-top: 24px;
+        background: #222;
+        border-radius: 8px;
+        padding: 12px;
+        color: #fff;
+    }
+    .achievement-bar-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        opacity: 0.5;
+        filter: grayscale(1);
+        transition: opacity 0.3s, filter 0.3s;
+    }
+    .achievement-bar-item.unlocked {
+        opacity: 1;
+        filter: none;
+    }
+    .achievement-bar-item .achievement-icon {
+        font-size: 22px;
+        margin-right: 8px;
+    }
+    .achievement-bar-item .achievement-title {
+        font-size: 15px;
+    }
+    /* Achievements modal styling */
+    .achievement-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        opacity: 0.5;
+        filter: grayscale(1);
+        transition: opacity 0.3s, filter 0.3s;
+    }
+    .achievement-item.unlocked {
+        opacity: 1;
+        filter: none;
+    }
+    .achievement-item .achievement-icon {
+        font-size: 28px;
+        margin-right: 12px;
+    }
+    .achievement-item .achievement-title {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+    .achievement-item .achievement-desc {
+        font-size: 14px;
+        color: #ccc;
+    }
+    </style>
+</body>
+</html>
         if (parseInt(document.getElementById('streakValue').innerText) >= 5) unlockAchievement('hotStreak');
         // ...existing code...
     }
