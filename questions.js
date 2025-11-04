@@ -654,8 +654,33 @@ let gameState = {
         questionsAnswered: 0,
         correctAnswers: 0,
         averageTime: 0
-    }
+    },
+    category: 'general', // added: current category
 };
+// Add: single gate for advancing to next question
+let advanceTimeoutId = null;
+let isAdvancing = false;
+
+// Smooth transition helper
+function animateQuestionTransition(nextFn) {
+    const qc = document.querySelector('.question-container');
+    const oc = elements.optionsContainer;
+    if (!qc || !oc) { nextFn(); return; }
+    qc.classList.add('fade-out');
+    oc.classList.add('fade-out');
+    setTimeout(() => {
+        nextFn();
+        qc.classList.remove('fade-out');
+        oc.classList.remove('fade-out');
+        qc.classList.add('fade-in');
+        oc.classList.add('fade-in');
+        // Cleanup fade-in class shortly after to allow re-apply later
+        setTimeout(() => {
+            qc.classList.remove('fade-in');
+            oc.classList.remove('fade-in');
+        }, 250);
+    }, 250);
+}
 
 // DOM Elements
 const elements = {
@@ -687,6 +712,7 @@ const elements = {
     soundToggle: document.getElementById('soundToggle'),
     musicToggle: document.getElementById('musicToggle'),
     themeSelect: document.getElementById('themeSelect'),
+    categorySelect: document.getElementById('categorySelect'), // added
     
     // Lifelines
     fiftyFifty: document.getElementById('fiftyFifty'),
@@ -712,6 +738,7 @@ function loadSettings() {
         gameState.settings = { ...gameState.settings, ...settings };
         gameState.difficulty = settings.difficulty || 'medium';
         gameState.playerName = settings.playerName || 'Player';
+        gameState.category = settings.category || 'general'; // added
     }
     
     // Apply settings to UI
@@ -720,6 +747,7 @@ function loadSettings() {
     elements.soundToggle.checked = gameState.settings.sound;
     elements.musicToggle.checked = gameState.settings.music;
     elements.themeSelect.value = gameState.settings.theme;
+    if (elements.categorySelect) elements.categorySelect.value = gameState.category; // added
     
     // Apply theme on load
     applyTheme(gameState.settings.theme);
@@ -732,13 +760,21 @@ function saveSettings() {
         difficulty: elements.difficultySelect.value,
         sound: elements.soundToggle.checked,
         music: elements.musicToggle.checked,
-        theme: elements.themeSelect.value
+        theme: elements.themeSelect.value,
+        category: elements.categorySelect.value // added
     };
     
     localStorage.setItem('millionaireSettings', JSON.stringify(settings));
     gameState.settings = { ...gameState.settings, ...settings };
     gameState.difficulty = settings.difficulty;
     gameState.playerName = settings.playerName;
+    gameState.category = settings.category; // added
+
+    // Auto-switch to Anime Edition if category is Anime
+    if (gameState.category === 'anime') {
+        gameState.difficulty = 'animeEdition';
+        if (elements.difficultySelect) elements.difficultySelect.value = 'animeEdition';
+    }
     
     // Apply theme immediately
     applyTheme(settings.theme);
@@ -864,9 +900,33 @@ function startNewGame() {
     gameState.current = 0;
     gameState.prize = 0;
     gameState.gameActive = true;
+    gameState.streak = 0; // reset streak each game
     
-    // Build randomized per-game question set
-    const bank = [...questions[gameState.difficulty]];
+    // Sync current selects even if user didn’t press "Save Settings"
+    if (elements.difficultySelect) gameState.difficulty = elements.difficultySelect.value;
+    if (elements.categorySelect) gameState.category = elements.categorySelect.value;
+
+    // If Anime category selected, force Anime Edition difficulty
+    if (gameState.category === 'anime') {
+        gameState.difficulty = 'animeEdition';
+        if (elements.difficultySelect) elements.difficultySelect.value = 'animeEdition';
+    }
+
+    // Build randomized per-game question set (filtered by category)
+    let bank = [];
+    if (gameState.difficulty === 'animeEdition') {
+        bank = [...questions.animeEdition];
+    } else {
+        bank = [...(questions[gameState.difficulty] || [])];
+    }
+
+    // Filter by category (non-anime only; animeEdition is its own pool)
+    if (gameState.difficulty !== 'animeEdition') {
+        const filtered = filterQuestionsByCategory(bank, gameState.category);
+        if (filtered.length > 0) bank = filtered;
+        // If nothing matches, fallback to original bank to avoid empty game
+    }
+
     shuffleArray(bank);
     gameState.totalQuestions = Math.min(prizes.length, bank.length);
     gameState.currentQuestions = bank.slice(0, gameState.totalQuestions);
@@ -890,22 +950,53 @@ function startNewGame() {
     }
 }
 
+// Helper: Filter questions by selected category
+function filterQuestionsByCategory(bank, selectedCat) {
+    return bank.filter(q => categoryMatches(q.category, selectedCat));
+}
+
+// Helper: Match category label to selected category
+function categoryMatches(label, selectedCat) {
+    if (!label) return selectedCat === 'general';
+    const l = String(label).toLowerCase();
+
+    if (selectedCat === 'science') {
+        return /(science|physics|chemistry|biology)/i.test(l);
+    }
+    if (selectedCat === 'history') {
+        return /(history|government)/i.test(l);
+    }
+    if (selectedCat === 'sports') {
+        return /sports/i.test(l);
+    }
+    if (selectedCat === 'anime') {
+        // handled by forcing difficulty to animeEdition
+        return false;
+    }
+    // "general" bucket: anything not science/history/sports/anime
+    return !/(science|physics|chemistry|biology|history|government|sports|anime)/i.test(l);
+}
+
 // Load Question
 function loadQuestion() {
     if (gameState.current >= gameState.totalQuestions) {
         endGame(true);
         return;
     }
+    // Clear any pending auto-advance to avoid overlap
+    if (advanceTimeoutId) {
+        clearTimeout(advanceTimeoutId);
+        advanceTimeoutId = null;
+    }
+    isAdvancing = false; // reset gate when a question is rendered
 
     const question = gameState.currentQuestions[gameState.current];
-
     elements.questionNumber.textContent = `Question ${gameState.current + 1}`;
     elements.questionPrize.textContent = `₱${prizes[gameState.current].toLocaleString()}`;
     elements.questionText.textContent = question.q;
     elements.questionCategory.textContent = `Category: ${question.category}`;
     elements.feedbackText.textContent = '';
-    
-    // Create options
+    // Render options
     elements.optionsContainer.innerHTML = '';
     const shuffledOptions = [...question.options];
     shuffleArray(shuffledOptions);
@@ -917,33 +1008,43 @@ function loadQuestion() {
         optionBtn.addEventListener('click', () => selectAnswer(option));
         elements.optionsContainer.appendChild(optionBtn);
     });
-    
     updatePrizeLadder();
-
-    // Start or reset timer
     startTimer();
+    const firstBtn = elements.optionsContainer.querySelector('.option-btn');
+    if (firstBtn) firstBtn.focus();
 }
 
-// Accessibility: focus first option on question load
-function focusFirstOption() {
-    const btn = elements.optionsContainer.querySelector('.option-btn');
-    if (btn) btn.focus();
+// Helper: reliably move to next question
+function goToNextQuestion(delayMs = 1000) {
+    if (isAdvancing) return; // prevent multiple advances
+    isAdvancing = true;
+
+    if (advanceTimeoutId) {
+        clearTimeout(advanceTimeoutId);
+        advanceTimeoutId = null;
+    }
+
+    advanceTimeoutId = setTimeout(() => {
+        if (!gameState.gameActive) { isAdvancing = false; return; }
+        try {
+            animateQuestionTransition(loadQuestion);
+        } catch (e) {
+            console.error('Failed to load next question', e);
+            // Fallback to direct load if animation fails
+            loadQuestion();
+        }
+    }, delayMs);
 }
-const origLoadQuestion = loadQuestion;
-loadQuestion = function() {
-    origLoadQuestion();
-    focusFirstOption();
-};
 
 // Select Answer
 function selectAnswer(selected) {
     if (!gameState.gameActive) return;
     stopTimer();
-    
+
     const question = gameState.currentQuestions[gameState.current];
     const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
-    
-    // Disable all buttons
+
+    // Disable all buttons and show correctness
     optionButtons.forEach(btn => {
         btn.disabled = true;
         if (btn.dataset.option === question.answer) {
@@ -952,7 +1053,7 @@ function selectAnswer(selected) {
             btn.classList.add('incorrect');
         }
     });
-    
+
     if (selected === question.answer) {
         // Calculate streak bonus
         gameState.streak++;
@@ -990,37 +1091,51 @@ function selectAnswer(selected) {
         }
 
         elements.feedbackText.textContent = `✅ Correct! You now have ₱${gameState.prize.toLocaleString()}${streakMessage}`;
-        elements.feedbackText.style.color = '#00ff00';
-
-        if (gameState.settings.sound) {
-            playSound('correct');
-        }
+        elements.feedbackText.classList.remove('error');
+        elements.feedbackText.classList.add('success');
+        if (gameState.settings.sound) playSound('correct');
 
         gameState.current++;
         updatePlayerInfo();
         updatePrizeLadder();
         updateStreakDisplay();
 
-        setTimeout(() => {
-            if (gameState.gameActive) {
-                loadQuestion();
-            }
-        }, 2000);
+        // Robust next-question transition
+        goToNextQuestion(1000);
     } else {
-        // Reset streak on wrong answer
+        // Wrong answer path
         gameState.streak = 0;
         updateStreakDisplay();
-
         elements.feedbackText.textContent = `❌ Wrong! The correct answer was "${question.answer}". Game Over!`;
-        elements.feedbackText.style.color = '#ff0000';
+        elements.feedbackText.classList.remove('success');
+        elements.feedbackText.classList.add('error');
+        if (gameState.settings.sound) playSound('incorrect');
 
-        if (gameState.settings.sound) {
-            playSound('incorrect');
+        // Cancel any pending next-question advance
+        if (advanceTimeoutId) {
+            clearTimeout(advanceTimeoutId);
+            advanceTimeoutId = null;
         }
+        isAdvancing = false;
 
         setTimeout(() => {
             endGame(false);
-        }, 2000);
+        }, 1200);
+    }
+}
+
+// Add: Streak UI updater to prevent ReferenceError and animate thresholds
+function updateStreakDisplay() {
+    const el = document.getElementById('streakValue');
+    if (!el) return;
+    el.classList.remove('hot', 'super-hot', 'mega-hot');
+    el.innerText = `${gameState.streak} 🔥`;
+    if (gameState.streak >= 10) {
+        el.classList.add('mega-hot');
+    } else if (gameState.streak >= 7) {
+        el.classList.add('super-hot');
+    } else if (gameState.streak >= 3) {
+        el.classList.add('hot');
     }
 }
 
@@ -1176,11 +1291,19 @@ function handleTimeout() {
     setTimeout(() => endGame(false), 1500);
 }
 
-// Update Lifelines Display
+// Update Lifelines Display (fix mapping + guard)
 function updateLifelines() {
+    const map = {
+        '50-50': 'fiftyFifty',
+        'phone': 'phoneFriend',
+        'audience': 'audiencePoll',
+        'swap': 'swapQuestion'
+        // 'hint' has no button; safely ignored
+    };
     Object.keys(gameState.lifelines).forEach(lifeline => {
-        const btn = elements[lifeline === '50-50' ? 'fiftyFifty' : 
-                           lifeline === 'phone' ? 'phoneFriend' : 'audiencePoll'];
+        const key = map[lifeline];
+        const btn = key ? elements[key] : null;
+        if (!btn) return; // skip non-visual lifelines like 'hint'
         if (gameState.lifelines[lifeline]) {
             btn.classList.remove('used');
             btn.disabled = false;
@@ -1269,6 +1392,7 @@ function resetSettings() {
     elements.soundToggle.checked = true;
     elements.musicToggle.checked = true;
     elements.themeSelect.value = 'classic';
+    elements.categorySelect.value = 'general'; // added
     saveSettings();
 }
 
