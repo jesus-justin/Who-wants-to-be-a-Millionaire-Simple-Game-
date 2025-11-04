@@ -453,41 +453,37 @@ if (file_exists("scores.json")) {
 
     <script src="questions.js"></script>
     <script>
-    // Utility to show/hide modals
-    function showModal(id) {
-        document.getElementById(id).style.display = 'block';
-        document.body.classList.add('modal-open');
-    }
-    function hideModal(id) {
-        document.getElementById(id).style.display = 'none';
-        document.body.classList.remove('modal-open');
-    }
+    // NOTE: Remove duplicate/legacy game logic from here. Let questions.js control the game.
+    // Keep only UI helpers that don't duplicate game logic.
 
-    // Achievements modal logic
+    // Modal helpers – use questions.js openModal/closeModal to avoid duplicates
+    document.getElementById('settingsBtn').onclick = function() {
+        openModal('settingsModal');
+    };
+    document.getElementById('leaderboardBtn').onclick = function() {
+        openModal('leaderboardModal');
+    };
     document.getElementById('achievementsBtn').onclick = function() {
-        showModal('achievementsModal');
+        openModal('achievementsModal');
     };
     document.getElementById('closeAchievements').onclick = function() {
-        hideModal('achievementsModal');
+        closeModal('achievementsModal');
     };
 
     // Daily Challenge modal logic
     document.getElementById('dailyChallengeBtn').onclick = function() {
-        showModal('dailyChallengeModal');
+        openModal('dailyChallengeModal');
     };
     document.getElementById('closeDailyChallenge').onclick = function() {
-        hideModal('dailyChallengeModal');
+        closeModal('dailyChallengeModal');
     };
     document.getElementById('startDailyChallengeBtn').onclick = function() {
-        hideModal('dailyChallengeModal');
-        // Start daily challenge logic here
-        alert('Daily Challenge started! Try to answer 10 questions correctly!');
-        // You can trigger your game logic here
+        closeModal('dailyChallengeModal');
+        // Optional: trigger a special mode in questions.js if desired.
     };
 
     // Random Event modal logic
     document.getElementById('randomEventBtn').onclick = function() {
-        // Pick a random event for fun
         const events = [
             "Double points for the next question!",
             "Lose a lifeline!",
@@ -497,16 +493,17 @@ if (file_exists("scores.json")) {
         ];
         const eventText = events[Math.floor(Math.random() * events.length)];
         document.getElementById('randomEventText').innerText = eventText;
-        showModal('randomEventModal');
+        openModal('randomEventModal');
     };
     document.getElementById('closeRandomEvent').onclick = function() {
-        hideModal('randomEventModal');
+        closeModal('randomEventModal');
     };
 
     // Sidebar toggle for mobile
     const sidebar = document.querySelector('.sidebar');
     const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-    sidebarToggleBtn.addEventListener('click', function() {
+    sidebarToggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
         sidebar.classList.toggle('open');
     });
 
@@ -519,622 +516,20 @@ if (file_exists("scores.json")) {
         }
     });
 
-    // Enhance feedback animation
-    function showFeedback(type, message) {
-        const feedbackText = document.getElementById('feedbackText');
-        feedbackText.textContent = message;
-        feedbackText.className = 'feedback-text ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
-        setTimeout(() => {
-            feedbackText.className = 'feedback-text';
-        }, 1500);
-    }
-
-    // Replace feedbackText usage in onAnswerSelected
-    function onAnswerSelected(selectedIdx) {
-        const qObj = filteredQuestions[currentQuestionIndex];
-        const isCorrect = selectedIdx === qObj.answer;
-        if (isCorrect) {
-            showFeedback('success', "Correct!");
-            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
-            score += (currentQuestionIndex + 1) * 1000;
-            document.getElementById('currentScore').innerText = '₱' + score;
-            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
-            streak += 1;
-            document.getElementById('streakValue').innerText = streak + " 🔥";
-            const answerTime = (Date.now() - questionStartTime) / 1000;
-            if (answerTime < 1) unlockAchievement('under1Sec');
-            if (streak >= 5) unlockAchievement('hotStreak');
-            // Move to next question (increment by 1)
-            setTimeout(() => {
-                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
-            }, 1000);
-        } else {
-            showFeedback('error', "Wrong!");
-            document.getElementById('streakValue').innerText = "0 🔥";
-            setTimeout(() => {
-                onGameEnd(
-                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                    localStorage.getItem('difficulty') || 'medium',
-                    localStorage.getItem('category') || 'general'
-                );
-            }, 1000);
-        }
-    }
-
-    // End game logic
-    function onGameEnd(finalScore, difficulty, category) {
-        if (finalScore > 0) unlockAchievement('firstWin');
-        if (finalScore >= 1000000) unlockAchievement('millionaire');
-        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
-        document.getElementById('finalScoreDisplay').innerText = '₱' + finalScore;
-        document.getElementById('finalScore').value = finalScore;
-        document.getElementById('finalDifficulty').value = difficulty;
-        showModal('gameOverModal');
-    }
-
-    // Start game button logic
-    document.getElementById('startGameBtn').onclick = function() {
-        // Get settings from the settings modal (not just localStorage)
-        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
-        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
-        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
-
-        // Save current settings to localStorage for consistency
-        localStorage.setItem('playerName', playerName);
-        localStorage.setItem('difficulty', difficulty);
-        localStorage.setItem('category', category);
-
-        // Update UI
-        document.getElementById('playerName').innerText = playerName;
-        document.getElementById('difficultySelect').value = difficulty;
-        document.getElementById('categorySelect').value = category;
-        document.getElementById('currentScore').innerText = '₱0';
-        document.getElementById('streakValue').innerText = '0 🔥';
-
-        // Load first question using selected category and difficulty
-        loadQuestion(1, difficulty, category);
-    };
-
-    // Achievements logic
-    const achievements = {
-        firstWin: { icon: "🏆", title: "First Win", desc: "Win your first game." },
-        hotStreak: { icon: "🔥", title: "Hot Streak", desc: "Answer 5 questions correctly in a row." },
-        millionaire: { icon: "💰", title: "Millionaire", desc: "Reach ₱1,000,000." },
-        animeMaster: { icon: "🎌", title: "Anime Master", desc: "Win Anime Edition." },
-        under1Sec: { icon: "⚡", title: "Finish Under 1 Second", desc: "Answer a question in under 1 second." }
-    };
-
-    function getAchievements() {
-        return JSON.parse(localStorage.getItem('achievements') || '{}');
-    }
-    function setAchievements(obj) {
-        localStorage.setItem('achievements', JSON.stringify(obj));
-    }
-
-    function updateAchievementBar() {
-        const unlocked = getAchievements();
-        document.querySelectorAll('.achievement-bar-item').forEach(item => {
-            const key = item.getAttribute('data-achievement');
-            if (unlocked[key]) {
-                item.classList.add('unlocked');
-                item.style.filter = 'none';
-                item.style.opacity = '1';
-            } else {
-                item.classList.remove('unlocked');
-                item.style.filter = 'grayscale(1)';
-                item.style.opacity = '0.5';
-            }
-        });
-    }
-    function updateAchievementsModal() {
-        const unlocked = getAchievements();
-        document.querySelectorAll('.achievement-item').forEach(item => {
-            const key = item.getAttribute('data-achievement');
-            if (unlocked[key]) {
-                item.classList.add('unlocked');
-                item.style.filter = 'none';
-                item.style.opacity = '1';
-            } else {
-                item.classList.remove('unlocked');
-                item.style.filter = 'grayscale(1)';
-                item.style.opacity = '0.5';
-            }
-        });
-    }
-    function unlockAchievement(key) {
-        const unlocked = getAchievements();
-        if (!unlocked[key]) {
-            unlocked[key] = true;
-            setAchievements(unlocked);
-            updateAchievementBar();
-            updateAchievementsModal();
-            showAchievementPopup(key);
-        }
-    }
-    function showAchievementPopup(key) {
-        const ach = achievements[key];
-        document.getElementById('achievementPopupIcon').innerText = ach.icon;
-        document.getElementById('achievementPopupText').innerText = `Achievement Unlocked: ${ach.title}`;
-        const popup = document.getElementById('achievementPopup');
-        popup.style.display = 'block';
-        setTimeout(() => { popup.style.display = 'none'; }, 2500);
-    }
-
-    // Call on page load
-    updateAchievementBar();
-    updateAchievementsModal();
-
-    // Example integration: unlock "Finish Under 1 Second" when answering a question quickly
-    // Replace this with your real question timer logic
-    let questionStartTime = null;
-    function loadQuestion(questionNumber, difficulty, category) {
-        // ...existing code...
-        questionStartTime = Date.now();
-        // ...existing code...
-    }
-    // Call this when player answers a question
-    function onAnswerSelected() {
-        // ...existing code...
-        const answerTime = (Date.now() - questionStartTime) / 1000;
-        if (answerTime < 1) unlockAchievement('under1Sec');
-        // Example: unlock hotStreak if streakValue >= 5
-        if (parseInt(document.getElementById('streakValue').innerText) >= 5) unlockAchievement('hotStreak');
-        // ...existing code...
-    }
-    // Example: unlock firstWin and millionaire at game end
-    function onGameEnd(finalScore, difficulty, category) {
-        if (finalScore > 0) unlockAchievement('firstWin');
-        if (finalScore >= 1000000) unlockAchievement('millionaire');
-        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
-    }
-
-    // Listen for changes to category or difficulty in the settings modal
-    document.getElementById('categorySelect').addEventListener('change', function() {
-        updatePreviewQuestion();
-    });
-    document.getElementById('difficultySelect').addEventListener('change', function() {
-        updatePreviewQuestion();
-    });
-
-    // Preview the first question for the selected category/difficulty in the settings modal (optional UX)
-    function updatePreviewQuestion() {
-        const category = document.getElementById('categorySelect').value;
-        const difficulty = document.getElementById('difficultySelect').value;
-        const previewQuestions = getFilteredQuestions(category, difficulty);
-        if (previewQuestions.length > 0) {
-            document.getElementById('questionText').innerText = previewQuestions[0].q;
-            document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-            document.getElementById('questionNumber').innerText = 'Question 1';
-            document.getElementById('questionPrize').innerText = '₱1,000';
-            // Optionally show options for preview
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            previewQuestions[0].options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn preview';
-                btn.innerText = opt;
-                btn.disabled = true;
-                optionsContainer.appendChild(btn);
+    // Close modals on ESC using questions.js modal helpers
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            ['settingsModal','leaderboardModal','gameOverModal','achievementsModal','dailyChallengeModal','randomEventModal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.classList.contains('show')) closeModal(id);
             });
         }
-    }
-
-    // When starting a new game, always use the selected category/difficulty from the modal
-    document.getElementById('startGameBtn').onclick = function() {
-        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
-        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
-        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
-
-        localStorage.setItem('playerName', playerName);
-        localStorage.setItem('difficulty', difficulty);
-        localStorage.setItem('category', category);
-
-        document.getElementById('playerName').innerText = playerName;
-        document.getElementById('difficultySelect').value = difficulty;
-        document.getElementById('categorySelect').value = category;
-        document.getElementById('currentScore').innerText = '₱0';
-        document.getElementById('streakValue').innerText = '0 🔥';
-
-        // Load first question using selected category and difficulty
-        loadQuestion(1, difficulty, category);
-    };
-
-    // 1. Fix question navigation logic (no duplicate function definition)
-    function onAnswerSelected(selectedIdx) {
-        const qObj = filteredQuestions[currentQuestionIndex];
-        const isCorrect = selectedIdx === qObj.answer;
-        if (isCorrect) {
-            showFeedback('success', "Correct!");
-            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
-            score += (currentQuestionIndex + 1) * 1000;
-            document.getElementById('currentScore').innerText = '₱' + score;
-            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
-            streak += 1;
-            document.getElementById('streakValue').innerText = streak + " 🔥";
-            const answerTime = (Date.now() - questionStartTime) / 1000;
-            if (answerTime < 1) unlockAchievement('under1Sec');
-            if (streak >= 5) unlockAchievement('hotStreak');
-            // Move to next question (increment by 1)
-            setTimeout(() => {
-                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
-            }, 1000);
-        } else {
-            showFeedback('error', "Wrong!");
-            document.getElementById('streakValue').innerText = "0 🔥";
-            setTimeout(() => {
-                onGameEnd(
-                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                    localStorage.getItem('difficulty') || 'medium',
-                    localStorage.getItem('category') || 'general'
-                );
-            }, 1000);
-        }
-    }
-
-    // 2. Prize ladder population (enhanced: highlight current question)
-    function populatePrizeLadder(currentQ) {
-        const ladder = document.getElementById('prizeLadder');
-        ladder.innerHTML = '';
-        for (let i = 1; i <= 15; i++) {
-            const div = document.createElement('div');
-            div.className = 'ladder-level';
-            div.innerText = `Q${i}: ₱${(i * 1000).toLocaleString()}`;
-            if (i === currentQ) {
-                div.classList.add('active-ladder');
-            }
-            ladder.appendChild(div);
-        }
-    }
-    // Call on question load
-    function loadQuestion(questionNumber, difficulty, category) {
-        filteredQuestions = getFilteredQuestions(category, difficulty);
-        currentQuestionIndex = questionNumber - 1;
-        if (currentQuestionIndex >= filteredQuestions.length) {
-            onGameEnd(
-                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                difficulty,
-                category
-            );
-            return;
-        }
-        const qObj = filteredQuestions[currentQuestionIndex];
-        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
-        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
-        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-        document.getElementById('questionText').innerText = qObj.q;
-
-        // Render options
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        qObj.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = function() { onAnswerSelected(idx); };
-            optionsContainer.appendChild(btn);
-        });
-
-        // Highlight current prize ladder
-        populatePrizeLadder(questionNumber);
-
-        // Start timer for achievement
-        questionStartTime = Date.now();
-    }
-
-    // 3. Lifeline buttons: visually disable after use (simple enhancement)
-    document.querySelectorAll('.lifeline-btn').forEach(btn => {
-        btn.onclick = function() {
-            if (btn.classList.contains('used-lifeline')) return;
-            btn.classList.add('used-lifeline');
-            btn.disabled = true;
-            alert('Lifeline feature not implemented yet.');
-        };
     });
 
-    // 4. UI/UX enhancements (add transitions, hover effects, better ladder highlight)
-    const style = document.createElement('style');
-    style.innerHTML = `
-.ladder-level {
-    padding: 6px 12px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    background: #222;
-    color: #fff;
-    transition: background 0.3s, color 0.3s;
-}
-.ladder-level.active-ladder {
-    background: #ffd700;
-    color: #222;
-    font-weight: bold;
-    box-shadow: 0 0 8px #ffd700;
-}
-.option-btn {
-    transition: background 0.2s, color 0.2s;
-}
-.option-btn:hover:not(:disabled) {
-    background: #ffd700;
-    color: #222;
-}
-.lifeline-btn.used-lifeline {
-    opacity: 0.5;
-    pointer-events: none;
-}
-.lifeline-btn {
-    transition: opacity 0.2s;
-}
-`;
-document.head.appendChild(style);
-
-    // 5. Accessibility: focus first option on question load
-    function focusFirstOption() {
-        const btn = document.querySelector('.option-btn');
-        if (btn) btn.focus();
-    }
-    const origLoadQuestion = loadQuestion;
-    loadQuestion = function(questionNumber, difficulty, category) {
-        origLoadQuestion(questionNumber, difficulty, category);
-        focusFirstOption();
-    };
-
+    // Remove any duplicate legacy listeners that override start button behavior.
+    // Start button is managed by questions.js (initGame -> startNewGame).
     </script>
-    <style>
-    /* Achievement bar styling */
-    .achievement-bar {
-        margin-top: 24px;
-        background: #222;
-        border-radius: 8px;
-        padding: 12px;
-        color: #fff;
-    }
-    .achievement-bar-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        opacity: 0.5;
-        filter: grayscale(1);
-        transition: opacity 0.3s, filter 0.3s;
-    }
-    .achievement-bar-item.unlocked {
-        opacity: 1;
-        filter: none;
-    }
-    .achievement-bar-item .achievement-icon {
-        font-size: 22px;
-        margin-right: 8px;
-    }
-    .achievement-bar-item .achievement-title {
-        font-size: 15px;
-    }
-    /* Achievements modal styling */
-    .achievement-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-        opacity: 0.5;
-        filter: grayscale(1);
-        transition: opacity 0.3s, filter 0.3s;
-    }
-    .achievement-item.unlocked {
-        opacity: 1;
-        filter: none;
-    }
-    .achievement-item .achievement-icon {
-        font-size: 28px;
-        margin-right: 12px;
-    }
-    .achievement-item .achievement-title {
-        font-size: 18px;
-        margin-right: 8px;
-    }
-    .achievement-item .achievement-desc {
-        font-size: 14px;
-        color: #ccc;
-    }
-    </style>
-</body>
-</html>
-        if (parseInt(document.getElementById('streakValue').innerText) >= 5) unlockAchievement('hotStreak');
-        // ...existing code...
-    }
-    // Example: unlock firstWin and millionaire at game end
-    function onGameEnd(finalScore, difficulty, category) {
-        if (finalScore > 0) unlockAchievement('firstWin');
-        if (finalScore >= 1000000) unlockAchievement('millionaire');
-        if (difficulty === 'animeEdition' && finalScore > 0) unlockAchievement('animeMaster');
-    }
 
-    // Listen for changes to category or difficulty in the settings modal
-    document.getElementById('categorySelect').addEventListener('change', function() {
-        updatePreviewQuestion();
-    });
-    document.getElementById('difficultySelect').addEventListener('change', function() {
-        updatePreviewQuestion();
-    });
-
-    // Preview the first question for the selected category/difficulty in the settings modal (optional UX)
-    function updatePreviewQuestion() {
-        const category = document.getElementById('categorySelect').value;
-        const difficulty = document.getElementById('difficultySelect').value;
-        const previewQuestions = getFilteredQuestions(category, difficulty);
-        if (previewQuestions.length > 0) {
-            document.getElementById('questionText').innerText = previewQuestions[0].q;
-            document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-            document.getElementById('questionNumber').innerText = 'Question 1';
-            document.getElementById('questionPrize').innerText = '₱1,000';
-            // Optionally show options for preview
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            previewQuestions[0].options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn preview';
-                btn.innerText = opt;
-                btn.disabled = true;
-                optionsContainer.appendChild(btn);
-            });
-        }
-    }
-
-    // When starting a new game, always use the selected category/difficulty from the modal
-    document.getElementById('startGameBtn').onclick = function() {
-        const playerName = document.getElementById('playerNameInput').value || localStorage.getItem('playerName') || 'Player';
-        const difficulty = document.getElementById('difficultySelect').value || localStorage.getItem('difficulty') || 'medium';
-        const category = document.getElementById('categorySelect').value || localStorage.getItem('category') || 'general';
-
-        localStorage.setItem('playerName', playerName);
-        localStorage.setItem('difficulty', difficulty);
-        localStorage.setItem('category', category);
-
-        document.getElementById('playerName').innerText = playerName;
-        document.getElementById('difficultySelect').value = difficulty;
-        document.getElementById('categorySelect').value = category;
-        document.getElementById('currentScore').innerText = '₱0';
-        document.getElementById('streakValue').innerText = '0 🔥';
-
-        // Load first question using selected category and difficulty
-        loadQuestion(1, difficulty, category);
-    };
-
-    // 1. Fix question navigation logic (no duplicate function definition)
-    function onAnswerSelected(selectedIdx) {
-        const qObj = filteredQuestions[currentQuestionIndex];
-        const isCorrect = selectedIdx === qObj.answer;
-        const feedbackText = document.getElementById('feedbackText');
-        if (isCorrect) {
-            feedbackText.innerText = "Correct!";
-            let score = parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0;
-            score += (currentQuestionIndex + 1) * 1000;
-            document.getElementById('currentScore').innerText = '₱' + score;
-            let streak = parseInt(document.getElementById('streakValue').innerText) || 0;
-            streak += 1;
-            document.getElementById('streakValue').innerText = streak + " 🔥";
-            const answerTime = (Date.now() - questionStartTime) / 1000;
-            if (answerTime < 1) unlockAchievement('under1Sec');
-            if (streak >= 5) unlockAchievement('hotStreak');
-            // Move to next question (increment by 1)
-            setTimeout(() => {
-                feedbackText.innerText = "";
-                loadQuestion(currentQuestionIndex + 2, localStorage.getItem('difficulty') || 'medium', localStorage.getItem('category') || 'general');
-            }, 1000);
-        } else {
-            feedbackText.innerText = "Wrong!";
-            document.getElementById('streakValue').innerText = "0 🔥";
-            setTimeout(() => {
-                feedbackText.innerText = "";
-                onGameEnd(
-                    parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                    localStorage.getItem('difficulty') || 'medium',
-                    localStorage.getItem('category') || 'general'
-                );
-            }, 1000);
-        }
-    }
-
-    // 2. Prize ladder population (enhanced: highlight current question)
-    function populatePrizeLadder(currentQ) {
-        const ladder = document.getElementById('prizeLadder');
-        ladder.innerHTML = '';
-        for (let i = 1; i <= 15; i++) {
-            const div = document.createElement('div');
-            div.className = 'ladder-level';
-            div.innerText = `Q${i}: ₱${(i * 1000).toLocaleString()}`;
-            if (i === currentQ) {
-                div.classList.add('active-ladder');
-            }
-            ladder.appendChild(div);
-        }
-    }
-    // Call on question load
-    function loadQuestion(questionNumber, difficulty, category) {
-        filteredQuestions = getFilteredQuestions(category, difficulty);
-        currentQuestionIndex = questionNumber - 1;
-        if (currentQuestionIndex >= filteredQuestions.length) {
-            onGameEnd(
-                parseInt(document.getElementById('currentScore').innerText.replace(/[^\d]/g, '')) || 0,
-                difficulty,
-                category
-            );
-            return;
-        }
-        const qObj = filteredQuestions[currentQuestionIndex];
-        document.getElementById('questionNumber').innerText = 'Question ' + questionNumber;
-        document.getElementById('questionPrize').innerText = '₱' + (questionNumber * 1000);
-        document.getElementById('questionCategory').innerText = 'Category: ' + category.charAt(0).toUpperCase() + category.slice(1);
-        document.getElementById('questionText').innerText = qObj.q;
-
-        // Render options
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        qObj.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = function() { onAnswerSelected(idx); };
-            optionsContainer.appendChild(btn);
-        });
-
-        // Highlight current prize ladder
-        populatePrizeLadder(questionNumber);
-
-        // Start timer for achievement
-        questionStartTime = Date.now();
-    }
-
-    // 3. Lifeline buttons: visually disable after use (simple enhancement)
-    document.querySelectorAll('.lifeline-btn').forEach(btn => {
-        btn.onclick = function() {
-            if (btn.classList.contains('used-lifeline')) return;
-            btn.classList.add('used-lifeline');
-            btn.disabled = true;
-            alert('Lifeline feature not implemented yet.');
-        };
-    });
-
-    // 4. UI/UX enhancements (add transitions, hover effects, better ladder highlight)
-    const style = document.createElement('style');
-    style.innerHTML = `
-.ladder-level {
-    padding: 6px 12px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    background: #222;
-    color: #fff;
-    transition: background 0.3s, color 0.3s;
-}
-.ladder-level.active-ladder {
-    background: #ffd700;
-    color: #222;
-    font-weight: bold;
-    box-shadow: 0 0 8px #ffd700;
-}
-.option-btn {
-    transition: background 0.2s, color 0.2s;
-}
-.option-btn:hover:not(:disabled) {
-    background: #ffd700;
-    color: #222;
-}
-.lifeline-btn.used-lifeline {
-    opacity: 0.5;
-    pointer-events: none;
-}
-.lifeline-btn {
-    transition: opacity 0.2s;
-}
-`;
-document.head.appendChild(style);
-
-// 5. Accessibility: focus first option on question load
-function focusFirstOption() {
-    const btn = document.querySelector('.option-btn');
-    if (btn) btn.focus();
-}
-const origLoadQuestion = loadQuestion;
-loadQuestion = function(questionNumber, difficulty, category) {
-    origLoadQuestion(questionNumber, difficulty, category);
-    focusFirstOption();
-};
-
-    </script>
     <style>
     /* Achievement bar styling */
     .achievement-bar {
