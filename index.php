@@ -52,8 +52,9 @@ if (file_exists("scores.json")) {
 
     <!-- Main Dashboard -->
     <div class="dashboard">
-        <!-- Sidebar -->
+        <!-- Sidebar - Contains player info, lifelines, and prize ladder -->
         <aside class="sidebar">
+            <!-- Player Information Section -->
             <div class="player-info">
                 <div class="player-avatar">
                     <i class="fas fa-user"></i>
