@@ -29,6 +29,7 @@ body {
     overflow-x: hidden;
     transition: all 0.3s ease;
     background-size: 400% 400%;
+    /* Animated gradient that moves continuously */
     animation: gradientMove 15s ease infinite;
 }
 
