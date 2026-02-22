@@ -99,7 +99,7 @@ if (file_exists("scores.json")) {
                 </div>
             </div>
 
-            <!-- Achievement Bar -->
+            <!-- Achievement Bar - Displays unlocked and locked achievements -->
             <div class="achievement-bar">
                 <h4>Achievements</h4>
                 <div id="sidebarAchievements">
