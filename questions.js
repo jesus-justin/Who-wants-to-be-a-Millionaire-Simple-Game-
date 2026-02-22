@@ -267,6 +267,7 @@ const questions = {
         category: "Science"
     }
     ],
+    // Hard difficulty questions - Requires specialized knowledge and advanced understanding
     hard: [
         {
             q: "🔬 What is the speed of light in vacuum?",
