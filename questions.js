@@ -1,4 +1,8 @@
-// Enhanced Question Database
+/**
+ * Enhanced Question Database
+ * Contains all questions organized by difficulty levels: easy, medium, hard, animeEdition
+ * Each question includes emoji, options, correct answer, and category
+ */
 const questions = {
     easy: [
     {
