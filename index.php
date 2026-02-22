@@ -1,5 +1,6 @@
 <?php
-// Load scores
+// Load scores from JSON file
+// This file stores all player scores for leaderboard
 $scores = [];
 if (file_exists("scores.json")) {
     $scores = json_decode(file_get_contents("scores.json"), true);
