@@ -127,9 +127,10 @@ if (file_exists("scores.json")) {
             </div>
         </aside>
 
-        <!-- Game Area -->
+        <!-- Game Area - Main gameplay section with questions and options -->
         <main class="game-area">
             <div class="game-container">
+                <!-- Question Display Container -->
                 <div class="question-container">
                     <div class="question-header">
                         <span class="question-number" id="questionNumber">Question 1</span>
