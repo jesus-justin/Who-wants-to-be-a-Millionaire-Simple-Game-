@@ -5,13 +5,19 @@
     box-sizing: border-box;
 }
 
-/* CSS Custom Properties for Theming */
+/* CSS Custom Properties for Theming - Supports light/dark mode */
 :root {
+    /* Primary gradient background */
     --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Secondary background for cards */
     --secondary-bg: rgba(0, 0, 0, 0.8);
+    /* Accent color for highlights */
     --accent-color: #ffd700;
+    /* Text color for readability */
     --text-color: #ffffff;
+    /* Button styling */
     --button-bg: linear-gradient(45deg, #667eea, #764ba2);
+    /* Gold color for premium elements */
     --gold-color: #ffd700;
 }
 
