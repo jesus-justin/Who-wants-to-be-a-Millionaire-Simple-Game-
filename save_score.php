@@ -1,5 +1,11 @@
 <?php
+/**
+ * Score Saving Handler
+ * Receives POST requests with player name, score, and difficulty level
+ * Saves scores to scores.json with backward compatibility support
+ */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get and sanitize input data
     $player = htmlspecialchars($_POST["player"]);
     $score = intval($_POST["score"]);
     $difficulty = htmlspecialchars($_POST["difficulty"]);
