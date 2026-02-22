@@ -126,6 +126,7 @@ const questions = {
         category: "Science"
     }
     ],
+    // Medium difficulty questions - Requires more knowledge and thinking
     medium: [
         {
             q: "🧬 What is the powerhouse of the cell?",
