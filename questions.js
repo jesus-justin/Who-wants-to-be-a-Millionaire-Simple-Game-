@@ -420,6 +420,7 @@ const questions = {
         category: "Chemistry"
     }
     ],
+    // Anime Edition questions - Specialized questions for anime enthusiasts
     animeEdition: [
         {
             q: "🌀 What is the name of Naruto's father?",
