@@ -6,9 +6,18 @@
  */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get and sanitize input data
-    $player = htmlspecialchars($_POST["player"]);
-    $score = intval($_POST["score"]);
-    $difficulty = htmlspecialchars($_POST["difficulty"]);
+    $player = isset($_POST["player"]) ? trim(htmlspecialchars($_POST["player"])) : '';
+    $score = isset($_POST["score"]) ? intval($_POST["score"]) : 0;
+    $difficulty = isset($_POST["difficulty"]) ? htmlspecialchars($_POST["difficulty"]) : 'medium';
+
+    if ($player === '') {
+        $player = 'Player';
+    }
+
+    $allowedDifficulties = ['easy', 'medium', 'hard', 'animeEdition'];
+    if (!in_array($difficulty, $allowedDifficulties, true)) {
+        $difficulty = 'medium';
+    }
 
     $scores = [];
     if (file_exists("scores.json")) {
