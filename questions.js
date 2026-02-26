@@ -644,6 +644,7 @@ let gameState = {
         'hint': true
     },
     gameActive: false,
+    questionStartTime: null,
     settings: {
         sound: true,
         music: true,
@@ -660,13 +661,39 @@ let gameState = {
         bestStreak: 0,
         questionsAnswered: 0,
         correctAnswers: 0,
-        averageTime: 0
+        averageTime: 0,
+        totalAnswerTime: 0
     },
     category: 'general', // added: current category
 };
 // Add: single gate for advancing to next question
 let advanceTimeoutId = null;
 let isAdvancing = false;
+
+const TIMER_DURATION = 30;
+
+const achievementDefinitions = {
+    firstWin: {
+        title: 'First Win',
+        desc: 'Win your first game.'
+    },
+    hotStreak: {
+        title: 'Hot Streak',
+        desc: 'Answer 5 questions correctly in a row.'
+    },
+    millionaire: {
+        title: 'Millionaire',
+        desc: 'Reach ₱1,000,000.'
+    },
+    animeMaster: {
+        title: 'Anime Master',
+        desc: 'Win Anime Edition.'
+    },
+    under1Sec: {
+        title: 'Under 1 Second',
+        desc: 'Answer a question in under 1 second.'
+    }
+};
 
 // Smooth transition helper
 function animateQuestionTransition(nextFn) {
@@ -695,6 +722,7 @@ const elements = {
     questionNumber: document.getElementById('questionNumber'),
     questionPrize: document.getElementById('questionPrize'),
     questionTimer: document.getElementById('questionTimer'),
+    timerBar: document.getElementById('timerBar'),
     questionCategory: document.getElementById('questionCategory'),
     optionsContainer: document.getElementById('optionsContainer'),
     feedbackText: document.getElementById('feedbackText'),
@@ -725,16 +753,142 @@ const elements = {
     fiftyFifty: document.getElementById('fiftyFifty'),
     phoneFriend: document.getElementById('phoneFriend'),
     audiencePoll: document.getElementById('audiencePoll'),
-    swapQuestion: document.getElementById('swapQuestion')
+    swapQuestion: document.getElementById('swapQuestion'),
+    hintLifeline: document.getElementById('hintLifeline'),
+
+    // Statistics
+    statGamesPlayed: document.getElementById('statGamesPlayed'),
+    statWinRate: document.getElementById('statWinRate'),
+    statBestStreak: document.getElementById('statBestStreak'),
+    statAccuracy: document.getElementById('statAccuracy'),
+    statAvgTime: document.getElementById('statAvgTime')
 };
 
 // Initialize Game
 function initGame() {
     loadSettings();
+    loadAchievements();
+    loadStatistics();
+    setupConfetti();
     setupEventListeners();
     buildPrizeLadder();
     updatePlayerInfo();
+    updateAchievementsUI();
+    updateStatisticsUI();
     showWelcomeScreen();
+}
+
+function loadAchievements() {
+    const saved = localStorage.getItem('millionaireAchievements');
+    if (saved) {
+        try {
+            gameState.achievements = JSON.parse(saved);
+        } catch (e) {
+            gameState.achievements = {};
+        }
+    }
+    Object.keys(achievementDefinitions).forEach(key => {
+        if (gameState.achievements[key] === undefined) {
+            gameState.achievements[key] = false;
+        }
+    });
+}
+
+function saveAchievements() {
+    localStorage.setItem('millionaireAchievements', JSON.stringify(gameState.achievements));
+}
+
+function unlockAchievement(id) {
+    if (gameState.achievements[id]) return;
+    gameState.achievements[id] = true;
+    saveAchievements();
+    updateAchievementsUI();
+    showAchievementPopup(id);
+}
+
+function updateAchievementsUI() {
+    const items = document.querySelectorAll('[data-achievement]');
+    items.forEach(item => {
+        const key = item.dataset.achievement;
+        if (gameState.achievements[key]) {
+            item.classList.add('unlocked');
+        } else {
+            item.classList.remove('unlocked');
+        }
+    });
+}
+
+function showAchievementPopup(id) {
+    const popup = document.getElementById('achievementPopup');
+    const icon = document.getElementById('achievementPopupIcon');
+    const text = document.getElementById('achievementPopupText');
+    if (!popup || !icon || !text) return;
+    const def = achievementDefinitions[id];
+    icon.textContent = getAchievementIcon(id);
+    text.textContent = def ? `${def.title} unlocked!` : 'Achievement unlocked!';
+    popup.style.display = 'block';
+    setTimeout(() => {
+        popup.style.display = 'none';
+    }, 2500);
+}
+
+function getAchievementIcon(id) {
+    const map = {
+        firstWin: '🏆',
+        hotStreak: '🔥',
+        millionaire: '💰',
+        animeMaster: '🎌',
+        under1Sec: '⚡'
+    };
+    return map[id] || '⭐';
+}
+
+function loadStatistics() {
+    const saved = localStorage.getItem('millionaireStatistics');
+    if (saved) {
+        try {
+            const stats = JSON.parse(saved);
+            gameState.statistics = { ...gameState.statistics, ...stats };
+        } catch (e) {
+            // keep defaults
+        }
+    }
+}
+
+function saveStatistics() {
+    localStorage.setItem('millionaireStatistics', JSON.stringify(gameState.statistics));
+}
+
+function updateStatisticsUI() {
+    if (!elements.statGamesPlayed) return;
+    const s = gameState.statistics;
+    const winRate = s.gamesPlayed > 0 ? Math.round((s.gamesWon / s.gamesPlayed) * 100) : 0;
+    const accuracy = s.questionsAnswered > 0 ? Math.round((s.correctAnswers / s.questionsAnswered) * 100) : 0;
+    const avgTime = s.questionsAnswered > 0 ? (s.totalAnswerTime / s.questionsAnswered) : 0;
+
+    elements.statGamesPlayed.textContent = s.gamesPlayed;
+    elements.statWinRate.textContent = `${winRate}%`;
+    elements.statBestStreak.textContent = s.bestStreak;
+    elements.statAccuracy.textContent = `${accuracy}%`;
+    elements.statAvgTime.textContent = `${avgTime.toFixed(1)}s`;
+}
+
+function evaluateAchievements({ answerTime, won }) {
+    if (answerTime !== null && answerTime !== undefined && answerTime < 1) {
+        unlockAchievement('under1Sec');
+    }
+    if (gameState.streak >= 5) {
+        unlockAchievement('hotStreak');
+    }
+    if (gameState.prize >= 1000000) {
+        unlockAchievement('millionaire');
+    }
+    if (won) {
+        unlockAchievement('firstWin');
+        if (gameState.difficulty === 'animeEdition') {
+            unlockAchievement('animeMaster');
+        }
+    }
 }
 
 // Load Settings from Local Storage
@@ -814,6 +968,9 @@ function setupEventListeners() {
     elements.audiencePoll.addEventListener('click', () => useLifeline('audience'));
     if (elements.swapQuestion) {
         elements.swapQuestion.addEventListener('click', () => useLifeline('swap'));
+    }
+    if (elements.hintLifeline) {
+        elements.hintLifeline.addEventListener('click', () => useLifeline('hint'));
     }
 
     // Keyboard shortcuts: 1-4 for options, F=50-50, P=phone, A=audience, S=swap
@@ -941,7 +1098,8 @@ function startNewGame() {
         '50-50': true,
         'phone': true,
         'audience': true,
-        'swap': true
+        'swap': true,
+        'hint': true
     };
     
     buildPrizeLadder();
@@ -1003,6 +1161,7 @@ function loadQuestion() {
     elements.questionText.textContent = question.q;
     elements.questionCategory.textContent = `Category: ${question.category}`;
     elements.feedbackText.textContent = '';
+    gameState.questionStartTime = Date.now();
     // Render options
     elements.optionsContainer.innerHTML = '';
     const shuffledOptions = [...question.options];
@@ -1050,6 +1209,11 @@ function selectAnswer(selected) {
 
     const question = gameState.currentQuestions[gameState.current];
     const optionButtons = elements.optionsContainer.querySelectorAll('.option-btn');
+    const now = Date.now();
+    const answerTime = gameState.questionStartTime ? (now - gameState.questionStartTime) / 1000 : TIMER_DURATION;
+
+    gameState.statistics.questionsAnswered++;
+    gameState.statistics.totalAnswerTime += answerTime;
 
     // Disable all buttons and show correctness
     optionButtons.forEach(btn => {
@@ -1085,7 +1249,6 @@ function selectAnswer(selected) {
         gameState.prize = finalPrize;
 
         // Update statistics
-        gameState.statistics.questionsAnswered++;
         gameState.statistics.correctAnswers++;
         gameState.statistics.totalScore += finalPrize;
         if (gameState.streak > gameState.statistics.bestStreak) {
@@ -1106,6 +1269,12 @@ function selectAnswer(selected) {
         updatePlayerInfo();
         updatePrizeLadder();
         updateStreakDisplay();
+        evaluateAchievements({ answerTime, won: false });
+        updateStatisticsUI();
+        saveStatistics();
+        if (gameState.streak >= 3) {
+            triggerConfetti(700);
+        }
 
         // Robust next-question transition
         goToNextQuestion(1000);
@@ -1117,6 +1286,8 @@ function selectAnswer(selected) {
         elements.feedbackText.classList.remove('success');
         elements.feedbackText.classList.add('error');
         if (gameState.settings.sound) playSound('incorrect');
+        updateStatisticsUI();
+        saveStatistics();
 
         // Cancel any pending next-question advance
         if (advanceTimeoutId) {
@@ -1165,6 +1336,9 @@ function useLifeline(lifeline) {
             break;
         case 'swap':
             useSwapQuestion();
+            break;
+        case 'hint':
+            useHintLifeline(question, optionButtons);
             break;
     }
     
@@ -1250,10 +1424,24 @@ function useSwapQuestion() {
     loadQuestion();
 }
 
+function useHintLifeline(question, optionButtons) {
+    const correctAnswer = question.answer || '';
+    const firstLetter = correctAnswer.trim().charAt(0).toUpperCase();
+    const wrongOptions = Array.from(optionButtons).filter(btn =>
+        btn.dataset.option !== correctAnswer && !btn.disabled
+    );
+    if (wrongOptions.length > 0) {
+        const removeBtn = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+        removeBtn.disabled = true;
+        removeBtn.style.opacity = '0.35';
+    }
+    showNotification(`Hint: The answer starts with "${firstLetter}".`, 'info');
+}
+
 // Timer Controls
 function startTimer() {
     stopTimer();
-    gameState.timerSeconds = 30;
+    gameState.timerSeconds = TIMER_DURATION;
     updateTimerUI();
     gameState.timerId = setInterval(() => {
         if (!gameState.gameActive) { stopTimer(); return; }
@@ -1282,6 +1470,13 @@ function updateTimerUI() {
             elements.questionTimer.style.color = '';
         }
     }
+    if (elements.timerBar) {
+        const percent = Math.max(0, (gameState.timerSeconds / TIMER_DURATION) * 100);
+        elements.timerBar.style.width = `${percent}%`;
+        elements.timerBar.style.background = percent <= 15
+            ? 'linear-gradient(90deg, #ff6b6b, #ff0000)'
+            : 'linear-gradient(90deg, #00ff00, #ffd700)';
+    }
 }
 
 function handleTimeout() {
@@ -1292,6 +1487,10 @@ function handleTimeout() {
         btn.disabled = true;
         if (btn.dataset.option === question.answer) btn.classList.add('correct');
     });
+    gameState.statistics.questionsAnswered++;
+    gameState.statistics.totalAnswerTime += TIMER_DURATION;
+    updateStatisticsUI();
+    saveStatistics();
     elements.feedbackText.textContent = '⏰ Time is up!';
     elements.feedbackText.style.color = '#ff0000';
     if (gameState.settings.sound) playSound('incorrect');
@@ -1304,8 +1503,8 @@ function updateLifelines() {
         '50-50': 'fiftyFifty',
         'phone': 'phoneFriend',
         'audience': 'audiencePoll',
-        'swap': 'swapQuestion'
-        // 'hint' has no button; safely ignored
+        'swap': 'swapQuestion',
+        'hint': 'hintLifeline'
     };
     Object.keys(gameState.lifelines).forEach(lifeline => {
         const key = map[lifeline];
@@ -1349,6 +1548,7 @@ function endGame(won) {
         if (gameState.settings.sound) {
             playSound('victory');
         }
+        triggerConfetti(1500);
     } else {
         elements.gameOverTitle.textContent = 'Game Over!';
         elements.finalScoreDisplay.textContent = `₱${gameState.prize.toLocaleString()}`;
@@ -1358,6 +1558,12 @@ function endGame(won) {
             playSound('gameOver');
         }
     }
+
+    gameState.statistics.gamesPlayed++;
+    if (won) gameState.statistics.gamesWon++;
+    saveStatistics();
+    updateStatisticsUI();
+    evaluateAchievements({ won, answerTime: null });
 
     // Set the difficulty in the form
     const difficultyInput = document.getElementById('finalDifficulty');
@@ -1470,6 +1676,72 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.remove();
     }, 3500);
+}
+
+let confettiCanvas = null;
+let confettiCtx = null;
+let confettiPieces = [];
+let confettiAnimating = false;
+
+function setupConfetti() {
+    confettiCanvas = document.getElementById('confettiCanvas');
+    if (!confettiCanvas) return;
+    confettiCtx = confettiCanvas.getContext('2d');
+    resizeConfetti();
+    window.addEventListener('resize', resizeConfetti);
+}
+
+function resizeConfetti() {
+    if (!confettiCanvas) return;
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+}
+
+function triggerConfetti(durationMs = 1000, count = 80) {
+    if (!confettiCtx) return;
+    confettiPieces = Array.from({ length: count }, () => createConfettiPiece());
+    if (!confettiAnimating) {
+        confettiAnimating = true;
+        animateConfetti();
+    }
+    setTimeout(() => {
+        confettiPieces = [];
+        confettiAnimating = false;
+    }, durationMs);
+}
+
+function createConfettiPiece() {
+    const colors = ['#ffd700', '#ff6b6b', '#00ff00', '#00d4ff', '#ff00ff'];
+    return {
+        x: Math.random() * confettiCanvas.width,
+        y: -20 - Math.random() * confettiCanvas.height * 0.2,
+        size: 6 + Math.random() * 6,
+        speedY: 2 + Math.random() * 4,
+        speedX: -2 + Math.random() * 4,
+        rotation: Math.random() * Math.PI,
+        rotationSpeed: -0.1 + Math.random() * 0.2,
+        color: colors[Math.floor(Math.random() * colors.length)]
+    };
+}
+
+function animateConfetti() {
+    if (!confettiAnimating || !confettiCtx) return;
+    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    confettiPieces.forEach(piece => {
+        piece.y += piece.speedY;
+        piece.x += piece.speedX;
+        piece.rotation += piece.rotationSpeed;
+        if (piece.y > confettiCanvas.height + 20) {
+            piece.y = -20;
+        }
+        confettiCtx.save();
+        confettiCtx.translate(piece.x, piece.y);
+        confettiCtx.rotate(piece.rotation);
+        confettiCtx.fillStyle = piece.color;
+        confettiCtx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+        confettiCtx.restore();
+    });
+    requestAnimationFrame(animateConfetti);
 }
 
 // Sound: fix for mobile browsers (resume context if suspended)
