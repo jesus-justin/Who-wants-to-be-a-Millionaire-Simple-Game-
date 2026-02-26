@@ -1061,6 +1061,7 @@ function showWelcomeScreen() {
     elements.questionPrize.textContent = '₱0';
     elements.optionsContainer.innerHTML = '';
     elements.feedbackText.textContent = 'Click "Start New Game" to begin your journey to ₱1,000,000!';
+    resetTimerUI();
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';
 }
@@ -1485,6 +1486,18 @@ function updateTimerUI() {
     }
 }
 
+function resetTimerUI() {
+    gameState.timerSeconds = TIMER_DURATION;
+    if (elements.questionTimer) {
+        elements.questionTimer.textContent = `⏱️ ${TIMER_DURATION}`;
+        elements.questionTimer.style.color = '';
+    }
+    if (elements.timerBar) {
+        elements.timerBar.style.width = '100%';
+        elements.timerBar.style.background = 'linear-gradient(90deg, #00ff00, #ffd700)';
+    }
+}
+
 function handleTimeout() {
     if (!gameState.gameActive) return;
     const question = gameState.currentQuestions[gameState.current];
@@ -1543,6 +1556,7 @@ function updatePrizeLadder() {
 function endGame(won) {
     gameState.gameActive = false;
     stopTimer();
+    resetTimerUI();
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';
 
