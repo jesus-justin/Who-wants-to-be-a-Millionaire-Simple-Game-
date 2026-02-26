@@ -68,6 +68,36 @@ if (file_exists("scores.json")) {
                     <span class="streak-label">Current Streak:</span>
                     <span class="streak-value" id="streakValue">0 🔥</span>
                 </div>
+                <div class="achievements-mini" id="achievementsDisplay">
+                    <span class="achievement-badge" data-achievement="firstWin" title="First Win">🏆</span>
+                    <span class="achievement-badge" data-achievement="hotStreak" title="Hot Streak">🔥</span>
+                    <span class="achievement-badge" data-achievement="millionaire" title="Millionaire">💰</span>
+                    <span class="achievement-badge" data-achievement="animeMaster" title="Anime Master">🎌</span>
+                    <span class="achievement-badge" data-achievement="under1Sec" title="Under 1 Second">⚡</span>
+                </div>
+                <div class="statistics-panel">
+                    <h4>Statistics</h4>
+                    <div class="stat-row">
+                        <span>Games Played</span>
+                        <span id="statGamesPlayed">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Win Rate</span>
+                        <span id="statWinRate">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Best Streak</span>
+                        <span id="statBestStreak">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Accuracy</span>
+                        <span id="statAccuracy">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Avg Time</span>
+                        <span id="statAvgTime">0.0s</span>
+                    </div>
+                </div>
             </div>
 
             <div class="lifelines">
@@ -88,6 +118,10 @@ if (file_exists("scores.json")) {
                     <button class="lifeline-btn" id="swapQuestion" data-lifeline="swap">
                         <i class="fas fa-random"></i>
                         <span>Swap</span>
+                    </button>
+                    <button class="lifeline-btn hint-btn" id="hintLifeline" data-lifeline="hint">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Hint</span>
                     </button>
                 </div>
             </div>
@@ -136,6 +170,9 @@ if (file_exists("scores.json")) {
                         <span class="question-number" id="questionNumber">Question 1</span>
                         <span class="question-prize" id="questionPrize">₱1,000</span>
                         <span class="question-timer" id="questionTimer">⏱️ 30</span>
+                        <div class="timer-bar-container">
+                            <div class="timer-bar" id="timerBar"></div>
+                        </div>
                     </div>
                     <div class="question-category" id="questionCategory">Category: General Knowledge</div>
                     <div class="question-text" id="questionText">Loading question...</div>
@@ -455,6 +492,8 @@ if (file_exists("scores.json")) {
         <i class="fas fa-bars"></i>
     </button>
 
+    <canvas id="confettiCanvas"></canvas>
+
     <script src="questions.js"></script>
     <script>
     // NOTE: Remove duplicate/legacy game logic from here. Let questions.js control the game.
@@ -534,59 +573,5 @@ if (file_exists("scores.json")) {
     // Start button is managed by questions.js (initGame -> startNewGame).
     </script>
 
-    <style>
-    /* Achievement bar styling */
-    .achievement-bar {
-        margin-top: 24px;
-        background: #222;
-        border-radius: 8px;
-        padding: 12px;
-        color: #fff;
-    }
-    .achievement-bar-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        opacity: 0.5;
-        filter: grayscale(1);
-        transition: opacity 0.3s, filter 0.3s;
-    }
-    .achievement-bar-item.unlocked {
-        opacity: 1;
-        filter: none;
-    }
-    .achievement-bar-item .achievement-icon {
-        font-size: 22px;
-        margin-right: 8px;
-    }
-    .achievement-bar-item .achievement-title {
-        font-size: 15px;
-    }
-    /* Achievements modal styling */
-    .achievement-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-        opacity: 0.5;
-        filter: grayscale(1);
-        transition: opacity 0.3s, filter 0.3s;
-    }
-    .achievement-item.unlocked {
-        opacity: 1;
-        filter: none;
-    }
-    .achievement-item .achievement-icon {
-        font-size: 28px;
-        margin-right: 12px;
-    }
-    .achievement-item .achievement-title {
-        font-size: 18px;
-        margin-right: 8px;
-    }
-    .achievement-item .achievement-desc {
-        font-size: 14px;
-        color: #ccc;
-    }
-    </style>
 </body>
 </html>
