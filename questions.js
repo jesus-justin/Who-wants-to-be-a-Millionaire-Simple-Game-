@@ -989,6 +989,8 @@ function setupEventListeners() {
             elements.audiencePoll?.click();
         } else if (key === 's') {
             elements.swapQuestion?.click();
+        } else if (key === 'h') {
+            elements.hintLifeline?.click();
         }
     });
     
