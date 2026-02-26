@@ -241,6 +241,10 @@ body {
     transform: scale(1.05);
 }
 
+.achievement-badge:hover {
+    transform: scale(1.12);
+}
+
 .statistics-panel {
     margin-top: 1rem;
     padding-top: 1rem;
@@ -919,6 +923,14 @@ body {
     outline: 2px solid var(--gold-color);
     outline-offset: 2px;
     box-shadow: 0 0 8px var(--gold-color);
+}
+
+.option-btn:focus-visible,
+.lifeline-btn:focus-visible,
+.control-btn:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--gold-color);
+    outline-offset: 3px;
 }
 
 /* Animate feedback text for correct/wrong answers */
