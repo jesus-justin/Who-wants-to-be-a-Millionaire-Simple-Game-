@@ -1588,12 +1588,14 @@ function pauseGame() {
 // Modal Functions
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
+    if (!modal) return;
     modal.classList.add('show');
     modal.style.display = 'flex';
 }
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
+    if (!modal) return;
     modal.classList.remove('show');
     modal.style.display = 'none';
 }
