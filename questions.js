@@ -895,11 +895,15 @@ function evaluateAchievements({ answerTime, won }) {
 function loadSettings() {
     const savedSettings = localStorage.getItem('millionaireSettings');
     if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        gameState.settings = { ...gameState.settings, ...settings };
-        gameState.difficulty = settings.difficulty || 'medium';
-        gameState.playerName = settings.playerName || 'Player';
-        gameState.category = settings.category || 'general'; // added
+        try {
+            const settings = JSON.parse(savedSettings);
+            gameState.settings = { ...gameState.settings, ...settings };
+            gameState.difficulty = settings.difficulty || 'medium';
+            gameState.playerName = settings.playerName || 'Player';
+            gameState.category = settings.category || 'general'; // added
+        } catch (e) {
+            // Ignore invalid settings payloads
+        }
     }
     
     // Apply settings to UI
