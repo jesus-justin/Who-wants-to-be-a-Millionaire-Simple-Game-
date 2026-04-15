@@ -918,6 +918,14 @@ function loadSettings() {
     applyTheme(gameState.settings.theme);
 }
 
+function normalizeGameSelection(category, difficulty) {
+    if (category === 'anime') {
+        return 'animeEdition';
+    }
+
+    return difficulty;
+}
+
 // Save Settings to Local Storage
 function saveSettings() {
     const settings = {
@@ -928,6 +936,8 @@ function saveSettings() {
         theme: elements.themeSelect.value,
         category: elements.categorySelect.value // added
     };
+
+    settings.difficulty = normalizeGameSelection(settings.category, settings.difficulty);
     
     localStorage.setItem('millionaireSettings', JSON.stringify(settings));
     gameState.settings = { ...gameState.settings, ...settings };
@@ -1060,6 +1070,8 @@ function showWelcomeScreen() {
     elements.questionNumber.textContent = 'Ready to Play?';
     elements.questionPrize.textContent = '₱0';
     elements.optionsContainer.innerHTML = '';
+    elements.feedbackText.className = 'feedback-text';
+    elements.feedbackText.style.color = '';
     elements.feedbackText.textContent = 'Click "Start New Game" to begin your journey to ₱1,000,000!';
     resetTimerUI();
     elements.startGameBtn.style.display = 'flex';
@@ -1072,6 +1084,13 @@ function startNewGame() {
     gameState.prize = 0;
     gameState.gameActive = true;
     gameState.streak = 0; // reset streak each game
+    gameState.isDoublePointsRound = false;
+
+    if (advanceTimeoutId) {
+        clearTimeout(advanceTimeoutId);
+        advanceTimeoutId = null;
+    }
+    isAdvancing = false;
     
     // Sync current selects even if user didn’t press "Save Settings"
     if (elements.difficultySelect) gameState.difficulty = elements.difficultySelect.value;
@@ -1101,6 +1120,14 @@ function startNewGame() {
     shuffleArray(bank);
     gameState.totalQuestions = Math.min(prizes.length, bank.length);
     gameState.currentQuestions = bank.slice(0, gameState.totalQuestions);
+
+    if (gameState.totalQuestions === 0) {
+        gameState.gameActive = false;
+        showNotification('No questions are available for the selected mode.', 'error');
+        showWelcomeScreen();
+        return;
+    }
+
     gameState.lifelines = {
         '50-50': true,
         'phone': true,
@@ -1164,10 +1191,16 @@ function loadQuestion() {
 
     const question = gameState.currentQuestions[gameState.current];
     elements.questionNumber.textContent = `Question ${gameState.current + 1}`;
+    if (!question) {
+        showNotification('The current question pool is empty. Please start a new game.', 'error');
+        endGame(false);
+        return;
+    }
     elements.questionPrize.textContent = `₱${prizes[gameState.current].toLocaleString()}`;
     elements.questionText.textContent = question.q;
     elements.questionCategory.textContent = `Category: ${question.category}`;
     elements.feedbackText.textContent = '';
+    elements.feedbackText.style.color = '';
     gameState.questionStartTime = Date.now();
     // Render options
     elements.optionsContainer.innerHTML = '';
@@ -1556,6 +1589,11 @@ function updatePrizeLadder() {
 function endGame(won) {
     gameState.gameActive = false;
     stopTimer();
+    if (advanceTimeoutId) {
+        clearTimeout(advanceTimeoutId);
+        advanceTimeoutId = null;
+    }
+    isAdvancing = false;
     resetTimerUI();
     elements.startGameBtn.style.display = 'flex';
     elements.pauseGameBtn.style.display = 'none';

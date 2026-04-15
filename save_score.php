@@ -4,50 +4,77 @@
  * Receives POST requests with player name, score, and difficulty level
  * Saves scores to scores.json with backward compatibility support
  */
+function loadScores(): array
+{
+    $scores = [
+        'easy' => [],
+        'medium' => [],
+        'hard' => [],
+        'animeEdition' => [],
+    ];
+
+    if (!file_exists('scores.json')) {
+        return $scores;
+    }
+
+    $decoded = json_decode(file_get_contents('scores.json'), true);
+    if (!is_array($decoded)) {
+        return $scores;
+    }
+
+    if (!isset($decoded['easy']) && !isset($decoded['medium']) && !isset($decoded['hard']) && !isset($decoded['animeEdition'])) {
+        foreach ($decoded as $oldPlayer => $oldScore) {
+            $scores['medium'][$oldPlayer] = (int) $oldScore;
+        }
+
+        return $scores;
+    }
+
+    foreach ($scores as $difficulty => $_) {
+        if (isset($decoded[$difficulty]) && is_array($decoded[$difficulty])) {
+            $scores[$difficulty] = $decoded[$difficulty];
+        }
+    }
+
+    return $scores;
+}
+
+function sanitizePlayerName(string $playerName): string
+{
+    $playerName = trim(strip_tags($playerName));
+    $playerName = preg_replace('/\s+/', ' ', $playerName);
+
+    if ($playerName === '') {
+        return 'Player';
+    }
+
+    if (function_exists('mb_substr')) {
+        return mb_substr($playerName, 0, 32);
+    }
+
+    return substr($playerName, 0, 32);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get and sanitize input data
-    $player = isset($_POST["player"]) ? trim(htmlspecialchars($_POST["player"])) : '';
+    $player = isset($_POST["player"]) ? sanitizePlayerName((string) $_POST["player"]) : 'Player';
     $score = isset($_POST["score"]) ? intval($_POST["score"]) : 0;
-    $difficulty = isset($_POST["difficulty"]) ? htmlspecialchars($_POST["difficulty"]) : 'medium';
-
-    if ($player === '') {
-        $player = 'Player';
-    }
+    $difficulty = isset($_POST["difficulty"]) ? (string) $_POST["difficulty"] : 'medium';
 
     $allowedDifficulties = ['easy', 'medium', 'hard', 'animeEdition'];
     if (!in_array($difficulty, $allowedDifficulties, true)) {
         $difficulty = 'medium';
     }
 
-    $scores = [];
-    if (file_exists("scores.json")) {
-        $scores = json_decode(file_get_contents("scores.json"), true);
-    }
-
-    // Handle backward compatibility: if scores is flat (old format), migrate to new structure
-    if (isset($scores) && is_array($scores) && !isset($scores['easy']) && !isset($scores['medium']) && !isset($scores['hard'])) {
-        // Old flat structure detected, migrate to new nested structure
-        $migratedScores = ['easy' => [], 'medium' => [], 'hard' => []];
-        foreach ($scores as $oldPlayer => $oldScore) {
-            // Since we don't know the original difficulty, we'll put them in medium as default
-            $migratedScores['medium'][$oldPlayer] = $oldScore;
-        }
-        $scores = $migratedScores;
-    }
-
-    // Initialize difficulty arrays if they don't exist
-    if (!isset($scores['easy'])) $scores['easy'] = [];
-    if (!isset($scores['medium'])) $scores['medium'] = [];
-    if (!isset($scores['hard'])) $scores['hard'] = [];
-    if (!isset($scores['animeEdition'])) $scores['animeEdition'] = [];
+    $scores = loadScores();
 
     // Save only if score is higher for this difficulty
     if (!isset($scores[$difficulty][$player]) || $score > $scores[$difficulty][$player]) {
         $scores[$difficulty][$player] = $score;
     }
 
-    file_put_contents("scores.json", json_encode($scores));
-    header("Location: index.php");
+    file_put_contents('scores.json', json_encode($scores, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    header('Location: index.php?saved=1');
     exit();
 }
 ?>

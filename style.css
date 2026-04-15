@@ -1374,3 +1374,452 @@ body {
     0% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.5); }
     100% { box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.3); }
 }
+
+/* --------------------------------------------------------------------------
+   Enterprise-grade visual system override
+   -------------------------------------------------------------------------- */
+
+:root {
+    --font-body: 'Manrope', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
+    --surface: rgba(8, 12, 24, 0.78);
+    --surface-strong: rgba(11, 16, 31, 0.92);
+    --surface-soft: rgba(255, 255, 255, 0.06);
+    --border-soft: rgba(255, 255, 255, 0.12);
+    --border-strong: rgba(255, 215, 0, 0.35);
+    --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--primary-bg);
+    color: var(--text-color);
+    position: relative;
+    isolation: isolate;
+    color-scheme: dark;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(0, 212, 255, 0.16), transparent 28%),
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: auto, auto, 64px 64px, 64px 64px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.55));
+    z-index: -1;
+}
+
+h1, h2, h3, h4, .logo h1, .modal-header h2, .question-number, .question-prize, .score-value {
+    font-family: var(--font-display);
+}
+
+.header {
+    background: rgba(5, 8, 16, 0.72);
+    border-bottom: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-md);
+}
+
+.header-content,
+.dashboard {
+    width: min(1520px, calc(100% - 2rem));
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+    align-items: start;
+    gap: 1.5rem;
+    padding: 1.5rem 0 2rem;
+}
+
+.sidebar,
+.game-container,
+.modal-content,
+.question-container,
+.achievement-bar,
+.leaderboard-section,
+.statistics-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(20px);
+}
+
+.sidebar,
+.game-container {
+    border-radius: 28px;
+}
+
+.sidebar {
+    padding: 1.5rem;
+    position: sticky;
+    top: 88px;
+}
+
+.game-container {
+    padding: 1.5rem;
+    gap: 1.25rem;
+}
+
+.player-info,
+.lifelines,
+.prize-ladder,
+.achievement-bar {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.achievement-bar:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.player-avatar {
+    background: linear-gradient(160deg, var(--gold-color), rgba(255, 255, 255, 0.84));
+    box-shadow: 0 18px 40px rgba(255, 215, 0, 0.22);
+}
+
+.score-value,
+.question-prize {
+    color: var(--gold-color);
+}
+
+.question-container {
+    border-radius: 28px;
+    padding: 1.5rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
+}
+
+.question-header {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem 1rem;
+}
+
+.question-header > * {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.timer-bar-container {
+    grid-column: 1 / -1;
+    height: 10px;
+    border-radius: 999px;
+}
+
+.question-text {
+    font-size: clamp(1.15rem, 1.4vw, 1.55rem);
+    line-height: 1.7;
+    max-width: 52ch;
+    margin-inline: auto;
+}
+
+.options-container {
+    gap: 0.9rem;
+}
+
+.option-btn,
+.lifeline-btn,
+.control-btn,
+.settings-btn,
+.leaderboard-btn,
+.btn,
+.tab-btn,
+.sidebar-toggle-btn {
+    border-radius: 18px;
+    font-family: var(--font-display);
+}
+
+.option-btn {
+    min-height: 72px;
+    padding: 1.1rem 1.2rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-md);
+}
+
+.option-btn:hover {
+    transform: translateY(-4px);
+}
+
+.option-btn.correct,
+.theme-dark .option-btn.correct,
+.theme-neon .option-btn.correct {
+    color: #061018;
+}
+
+.control-btn,
+.settings-btn,
+.leaderboard-btn,
+.btn,
+.lifeline-btn,
+.tab-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+}
+
+.control-btn {
+    background: linear-gradient(135deg, #ff7a59, #ff4d8d);
+}
+
+.settings-btn,
+.leaderboard-btn,
+.lifeline-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+}
+
+.lifeline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lifeline-btn {
+    min-height: 68px;
+    animation: none;
+}
+
+.lifeline-btn.used {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.ladder-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+}
+
+.ladder-item.current {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 237, 78, 0.32));
+    color: #fffdf1;
+    border-color: rgba(255, 215, 0, 0.45);
+    box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.12), 0 16px 32px rgba(255, 215, 0, 0.15);
+}
+
+.leaderboard-tabs,
+.difficulty-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--gold-color), #fff1a8);
+    color: #0c101b;
+}
+
+.modal {
+    background: rgba(3, 5, 10, 0.72);
+}
+
+.modal-content {
+    width: min(980px, 94vw);
+    max-width: 980px;
+    max-height: 88vh;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-body {
+    display: grid;
+    gap: 1rem;
+}
+
+.settings-btn:hover,
+.leaderboard-btn:hover,
+.control-btn:hover,
+.btn:hover,
+.lifeline-btn:hover,
+.tab-btn:hover,
+.sidebar-toggle-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 34px rgba(0, 0, 0, 0.25);
+}
+
+.setting-group input,
+.setting-group select,
+.input-group input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.setting-group input:focus,
+.setting-group select:focus,
+.input-group input:focus {
+    outline: none;
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.12);
+}
+
+.leaderboard-section {
+    border-radius: 22px;
+    padding: 1rem;
+}
+
+.leaderboard-list {
+    gap: 0.75rem;
+}
+
+.leaderboard-item {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.leaderboard-item.rank-1,
+.leaderboard-item.rank-2,
+.leaderboard-item.rank-3 {
+    color: #061018;
+}
+
+.achievement-bar,
+.statistics-panel {
+    border-radius: 22px;
+    padding: 1rem;
+}
+
+.achievement-bar-item,
+.achievement-item {
+    padding: 0.55rem 0.4rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.feedback-text {
+    width: min(100%, 760px);
+    margin-inline: auto;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.notification {
+    background: rgba(10, 16, 31, 0.96) !important;
+    border: 1px solid rgba(255, 215, 0, 0.22) !important;
+    box-shadow: var(--shadow-xl) !important;
+}
+
+#achievementPopup {
+    background: rgba(10, 16, 31, 0.94) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.sidebar-toggle-btn {
+    background: linear-gradient(135deg, var(--gold-color), #fff1a8);
+    color: #12151f;
+}
+
+@media (max-width: 1180px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: relative;
+        top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        width: min(100%, calc(100% - 1rem));
+        padding-top: 1rem;
+    }
+
+    .game-container,
+    .sidebar,
+    .question-container {
+        border-radius: 24px;
+    }
+
+    .question-header {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .question-number {
+        justify-self: start;
+    }
+
+    .question-prize {
+        justify-self: end;
+    }
+
+    .question-timer {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+
+    .lifeline-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .leaderboard-item {
+        gap: 0.75rem;
+    }
+
+    .modal-content {
+        width: min(94vw, 100%);
+    }
+}
+
+@media (max-width: 540px) {
+    .header-content {
+        width: min(100%, calc(100% - 1rem));
+    }
+
+    .dashboard {
+        width: min(100%, calc(100% - 0.75rem));
+        gap: 1rem;
+    }
+
+    .header-controls,
+    .game-controls,
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .settings-btn,
+    .leaderboard-btn,
+    .control-btn,
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .options-container,
+    .lifeline-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .question-header {
+        grid-template-columns: 1fr;
+        justify-items: start;
+    }
+
+    .question-prize,
+    .question-timer {
+        justify-self: start;
+    }
+}
